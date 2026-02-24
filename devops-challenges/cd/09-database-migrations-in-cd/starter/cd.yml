@@ -1,0 +1,46 @@
+name: CD — Deploy with DB Migrations
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt pytest
+      - run: pytest
+
+  deploy:
+    # BUG 1: deploy runs before migrate — new app is live before schema exists
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          helm upgrade devops-app ./chart --install --atomic --timeout 5m \
+            --namespace prod --set image.tag=${{ github.sha }}
+
+  migrate:
+    needs: deploy   # BUG 1 (continued): migrate runs after deploy
+    # BUG 5: migrate doesn't need: test — can run against broken codebase
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt alembic
+
+      # BUG 3: no connection drain before migration
+      # BUG 2: no dry-run step — applies immediately without preview
+
+      - name: Apply migration
+        run: alembic upgrade head
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        # BUG 4: no rollback step if migration fails

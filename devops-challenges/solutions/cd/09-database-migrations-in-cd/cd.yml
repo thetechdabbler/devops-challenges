@@ -1,0 +1,66 @@
+name: CD — Deploy with DB Migrations
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - run: pip install -r requirements.txt pytest
+      - run: pytest
+
+  migrate:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - run: pip install -r requirements.txt alembic
+
+      - name: Drain existing connections
+        run: |
+          echo "Waiting for connections to drain..."
+          sleep 10
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Dry run — preview migration SQL
+        run: alembic upgrade head --sql
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Apply migration
+        id: apply
+        run: alembic upgrade head
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Rollback on migration failure
+        if: failure() && steps.apply.conclusion == 'failure'
+        run: alembic downgrade -1
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+  deploy:
+    needs: migrate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
+          chmod 600 ~/.kube/config
+      - run: |
+          helm upgrade devops-app ./chart --install --atomic --timeout 5m \
+            --namespace prod --set image.tag=${{ github.sha }}
