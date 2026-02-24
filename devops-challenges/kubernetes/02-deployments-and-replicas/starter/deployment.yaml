@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-app
+  labels:
+    app: devops-app
+spec:
+  replicas: 1   # BUG 1: should be 3 for HA
+
+  selector:
+    matchLabels:
+      app: devops-backend   # BUG 2: doesn't match template labels below
+
+  # BUG 3: strategy is missing — add RollingUpdate with maxUnavailable: 1 and maxSurge: 1
+
+  # BUG 4: minReadySeconds is missing — add minReadySeconds: 10
+
+  template:
+    metadata:
+      labels:
+        app: devops-app   # selector must match this exactly
+    spec:
+      containers:
+        - name: app
+          image: devops-app:1.0.0
+          ports:
+            - containerPort: 5000
+          env:
+            - name: APP_ENV
+              value: production
+          # BUG 5: no resources block — add requests and limits
