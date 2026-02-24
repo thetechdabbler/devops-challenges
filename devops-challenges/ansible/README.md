@@ -6,16 +6,16 @@ Automate server configuration and application deployment with Ansible.
 
 | # | Exercise | Level |
 |---|---------|-------|
-| 01 | [first-playbook](./01-first-playbook/) | Beginner |
-| 02 | [inventory-and-groups](./02-inventory-and-groups/) | Beginner |
-| 03 | [variables-and-templates](./03-variables-and-templates/) | Beginner |
+| 01 | [your-first-playbook](./01-your-first-playbook/) | Beginner |
+| 02 | [variables-and-templates](./02-variables-and-templates/) | Beginner |
+| 03 | [roles-and-reusability](./03-roles-and-reusability/) | Intermediate |
 | 04 | [handlers-and-notifications](./04-handlers-and-notifications/) | Intermediate |
-| 05 | [roles-structure](./05-roles-structure/) | Intermediate |
-| 06 | [ansible-vault-secrets](./06-ansible-vault-secrets/) | Intermediate |
-| 07 | [idempotency-patterns](./07-idempotency-patterns/) | Intermediate |
-| 08 | [ansible-galaxy-roles](./08-ansible-galaxy-roles/) | Advanced |
+| 05 | [ansible-vault](./05-ansible-vault/) | Intermediate |
+| 06 | [inventory-and-groups](./06-inventory-and-groups/) | Intermediate |
+| 07 | [conditionals-and-loops](./07-conditionals-and-loops/) | Intermediate |
+| 08 | [ansible-galaxy](./08-ansible-galaxy/) | Advanced |
 | 09 | [dynamic-inventory](./09-dynamic-inventory/) | Advanced |
-| 10 | [debug-a-broken-playbook](./10-debug-a-broken-playbook/) | Advanced |
+| 10 | [ci-with-ansible](./10-ci-with-ansible/) | Advanced |
 
 ## Prerequisites
 
