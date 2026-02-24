@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    # TODO: Map port 5000 on the container to port 5000 on your machine
+    # ports:
+    #   - "???:5000"
+
+    # TODO: Add environment variable so the app knows where Redis is
+    # The app reads REDIS_URL from the environment
+    # environment:
+    #   - REDIS_URL=redis://???:6379
+
+    # TODO: Make the app wait for Redis to be available before starting
+    # depends_on:
+    #   - ???
+
+  redis:
+    image: redis:7-alpine
+    # TODO: Expose Redis port so you can connect to it from your machine for debugging
+    # ports:
+    #   - "6379:6379"
