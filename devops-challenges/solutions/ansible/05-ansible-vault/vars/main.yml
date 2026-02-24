@@ -1,0 +1,4 @@
+---
+db_user: appuser
+db_host: db.internal
+db_name: appdb

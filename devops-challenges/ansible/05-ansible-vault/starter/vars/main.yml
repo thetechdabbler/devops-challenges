@@ -1,0 +1,5 @@
+---
+db_user: appuser
+db_host: db.internal
+db_name: appdb
+db_password: supersecret123   # BUG 1: plaintext secret — should be in an encrypted vault file

@@ -1,0 +1,3 @@
+# BUG 5: this file is not encrypted with ansible-vault
+# BUG 5 (continued): incorrect format — should be a YAML mapping
+supersecret123

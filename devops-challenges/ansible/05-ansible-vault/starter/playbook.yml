@@ -1,0 +1,24 @@
+---
+- name: Configure database connection
+  hosts: appservers
+  become: true
+
+  vars_files:
+    - vars/main.yml
+    - vars/secrets.yml    # BUG 4: wrong filename — file is named vault.yml
+
+  tasks:
+    - name: Write DB config
+      ansible.builtin.template:
+        src: db_config.j2
+        dest: /etc/myapp/db.conf
+        mode: "0600"
+
+    - name: Debug connection string
+      ansible.builtin.debug:
+        var: db_password   # BUG 3: prints the secret to output!
+
+    - name: Start app with DB password   # BUG 2: uses wrong variable name
+      ansible.builtin.command: >
+        /opt/myapp/bin/start --db-pass {{ db_pass }}
+      # vault defines 'db_password', not 'db_pass'
