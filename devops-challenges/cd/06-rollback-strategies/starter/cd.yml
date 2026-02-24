@@ -1,0 +1,35 @@
+name: CD — Deploy with Rollback
+
+on:
+  push:
+    branches: [main]
+
+env:
+  APP_NAME: devops-app
+  NAMESPACE: prod
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Deploy
+        run: |
+          kubectl set image deployment/$APP_NAME \
+            app=devops-app:${{ github.sha }} \
+            -n $NAMESPACE
+          kubectl rollout status deployment/$APP_NAME -n $NAMESPACE --timeout=3m
+
+      - name: Rollback on failure      # BUG 5: rollback as a step, not a job — can be skipped if deploy crashes
+        # BUG 1: missing if: failure() — runs on every deployment, not just failures
+        run: |
+          kubectl rollout undo deployment/app -n $NAMESPACE  # BUG 2: hardcoded "app" — wrong deployment name
+          # BUG 3: no kubectl rollout status after undo — no verification
+          # BUG 4: no Slack notification that a rollback occurred
