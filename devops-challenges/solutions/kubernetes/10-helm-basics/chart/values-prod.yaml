@@ -1,0 +1,18 @@
+replicaCount: 3
+
+image:
+  tag: "1.1.0"
+
+service:
+  type: ClusterIP
+
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "200m"
+  limits:
+    memory: "256Mi"
+    cpu: "1"
+
+env:
+  APP_ENV: production
