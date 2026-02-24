@@ -1,0 +1,14 @@
+version: "3.9"
+
+# TODO: Add the following hardening to the app service:
+# 1. read_only: true           (make the root filesystem read-only)
+# 2. tmpfs: [/tmp]             (allow writes to /tmp only)
+# 3. cap_drop: [ALL]           (drop all Linux capabilities)
+# 4. security_opt: [no-new-privileges:true]
+# 5. deploy.resources.limits: memory 256m, cpus 0.5
+
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
