@@ -1,0 +1,21 @@
+---
+- name: Deploy nginx configuration
+  hosts: webservers
+  become: true
+
+  handlers:
+    - name: Reload nginx
+      ansible.builtin.service:
+        name: nginx
+        state: reloaded
+
+  tasks:
+    - name: Deploy nginx config
+      ansible.builtin.template:
+        src: templates/nginx.conf.j2
+        # BUG 3: missing dest: key — where should the file be placed?
+        mode: "0644"
+      vars:                        # BUG 2: vars defined at task level — move to play level
+        server_name: myapp.example.com
+        port: 80
+      # BUG 5: missing notify: Reload nginx
