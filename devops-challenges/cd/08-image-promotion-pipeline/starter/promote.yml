@@ -1,0 +1,36 @@
+name: Image Promotion Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: "Git SHA to promote"
+        required: true
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to dev registry
+        uses: docker/login-action@v3
+        with:
+          registry: dev.registry.io
+          username: ${{ secrets.DEV_REGISTRY_USER }}
+          password: ${{ secrets.DEV_REGISTRY_TOKEN }}
+      # BUG 4: missing login to prod.registry.io — push will fail with auth error
+
+      # BUG 2: no vulnerability scan before promotion
+      # BUG 3: no immutability check — silently overwrites existing prod tag
+
+      - name: Pull from dev
+        run: docker pull dev.registry.io/devops-app:${{ inputs.sha }}
+
+      - name: Tag for production
+        run: |
+          # BUG 1: using latest tag instead of SHA — untraceable
+          docker tag dev.registry.io/devops-app:${{ inputs.sha }} \
+            prod.registry.io/devops-app:latest
+
+      - name: Push to production
+        run: docker push prod.registry.io/devops-app:latest
+      # BUG 5: no image signing after promotion
