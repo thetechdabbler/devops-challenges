@@ -1,0 +1,48 @@
+---
+- name: Provision users and services
+  hosts: all
+  become: true
+
+  vars:
+    users:
+      - alice
+      - bob
+      - carol
+
+  tasks:
+    - name: Install nginx on Debian/Ubuntu
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Install nginx on RedHat/CentOS
+      ansible.builtin.yum:
+        name: nginx
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Create users
+      ansible.builtin.user:
+        name: "{{ item }}"
+        shell: /bin/bash
+      loop: "{{ users }}"
+
+    - name: Install dev tools
+      ansible.builtin.package:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - git
+        - curl
+        - jq
+
+    - name: Check disk space
+      ansible.builtin.command: df -h /
+      register: disk_output
+      failed_when: disk_output.rc is defined and disk_output.rc != 0
+
+    - name: Show disk info
+      ansible.builtin.debug:
+        msg: "{{ disk_output.stdout }}"
+      when: disk_output.rc == 0

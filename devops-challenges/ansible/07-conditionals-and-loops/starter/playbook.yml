@@ -1,0 +1,42 @@
+---
+- name: Provision users and services
+  hosts: all
+  become: true
+
+  vars:
+    users:
+      - alice
+      - bob
+      - carol
+
+  tasks:
+    - name: Install nginx on Ubuntu    # BUG 1: wrong comparison — 'ubuntu' (lowercase) vs 'Debian' (capital)
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+      when: ansible_os_family == "ubuntu"
+
+    - name: Create users
+      ansible.builtin.user:
+        name: "{{ item.name }}"        # BUG 2: list has plain strings, not dicts — should be {{ item }}
+        shell: /bin/bash
+      loop: "{{ users }}"
+
+    - name: Install dev tools          # BUG 3: deprecated with_items — use loop
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - git
+        - curl
+        - jq
+
+    - name: Check disk space
+      ansible.builtin.command: df -h /
+      register: disk_output
+      failed_when: disk_output.rc != 0    # BUG 4: rc won't be set until after execution — circular reference (minor)
+      # BUG 5: disk_output used before checking if it was successful
+
+    - name: Show disk info
+      ansible.builtin.debug:
+        msg: "{{ disk_output.stdout }}"   # BUG 5: no guard — will fail if disk_output.rc != 0
