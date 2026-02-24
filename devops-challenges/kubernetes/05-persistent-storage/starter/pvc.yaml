@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: app-uploads
+spec:
+  accessModes:
+    - ReadWriteMany   # BUG 2: local clusters don't support RWX — use ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi  # BUG 3: too large for dev — use 1Gi
