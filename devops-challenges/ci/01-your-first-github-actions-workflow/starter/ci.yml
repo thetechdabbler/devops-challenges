@@ -1,0 +1,26 @@
+name: CI
+
+# BUG 1: Only triggers on push to main.
+# Add pull_request to also run on PRs.
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    # BUG 2: runs-on is missing — add: runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1   # BUG 3: use v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3"   # BUG 4: pin to "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Smoke test
+        run: python test.py   # BUG 5: this file doesn't exist; use: python -c "import app; print('OK')"
