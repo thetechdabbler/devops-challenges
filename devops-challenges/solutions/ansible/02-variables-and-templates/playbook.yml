@@ -1,0 +1,22 @@
+---
+- name: Deploy nginx configuration
+  hosts: webservers
+  become: true
+
+  vars:
+    server_name: myapp.example.com
+    port: 80
+
+  handlers:
+    - name: Reload nginx
+      ansible.builtin.service:
+        name: nginx
+        state: reloaded
+
+  tasks:
+    - name: Deploy nginx config
+      ansible.builtin.template:
+        src: templates/nginx.conf.j2
+        dest: /etc/nginx/sites-available/default
+        mode: "0644"
+      notify: Reload nginx
