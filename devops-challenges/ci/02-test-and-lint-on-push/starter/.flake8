@@ -1,0 +1,5 @@
+[flake8]
+# BUG 1: max-line-length is set to 79 (default) — causes failures on the sample app
+# Change to 120
+max-line-length = 79
+exclude = .git,__pycache__,.venv,venv

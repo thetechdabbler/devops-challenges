@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main, "feat/**"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # BUG 4: lint and test are in one job — split them into parallel jobs
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        # BUG 3: pytest and flake8 are not installed — add requirements-dev.txt
+        run: pip install -r requirements.txt
+
+      - name: Lint
+        # BUG 1: no .flake8 config — will fail on long lines in the sample app
+        run: flake8 .
+
+      - name: Test
+        # BUG 2: no coverage flags — add --cov=app --cov-report=xml
+        run: pytest
+
+      # BUG 5: no artifact upload step for coverage.xml
