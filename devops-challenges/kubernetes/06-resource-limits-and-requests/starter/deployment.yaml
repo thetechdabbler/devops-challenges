@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: devops-app
+  template:
+    metadata:
+      labels:
+        app: devops-app
+    spec:
+      initContainers:
+        - name: init-check
+          image: busybox
+          command: ["sh", "-c", "echo Init complete"]
+          # BUG 5: init containers also need resource requests
+
+      containers:
+        - name: app
+          image: devops-app:1.0.0
+          ports:
+            - containerPort: 5000
+          # BUG 1 & 2: no resources block at all — add requests and limits
