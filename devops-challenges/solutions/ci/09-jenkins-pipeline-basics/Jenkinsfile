@@ -1,0 +1,56 @@
+pipeline {
+    agent {
+        docker {
+            image 'python:3.11-slim'
+        }
+    }
+
+    options {
+        timeout(time: 15, unit: 'MINUTES')
+        disableConcurrentBuilds()
+    }
+
+    stages {
+        stage('Install') {
+            steps {
+                sh '''
+                    python -m venv .venv
+                    . .venv/bin/activate
+                    pip install -r requirements.txt pytest
+                '''
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh '''
+                    . .venv/bin/activate
+                    pytest --junitxml=test-results.xml
+                '''
+            }
+            post {
+                always {
+                    junit 'test-results.xml'
+                }
+            }
+        }
+
+        stage('Deploy') {
+            when {
+                branch 'main'
+            }
+            steps {
+                sh 'echo "Deploying to production..."'
+            }
+        }
+    }
+
+    post {
+        failure {
+            echo 'Pipeline failed!'
+        }
+        always {
+            cleanWs()
+        }
+    }
+}
