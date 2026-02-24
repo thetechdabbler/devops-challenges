@@ -6,16 +6,16 @@ Build fast, reliable continuous integration pipelines — and learn to debug the
 
 | # | Exercise | Level |
 |---|---------|-------|
-| 01 | [first-github-actions-workflow](./01-first-github-actions-workflow/) | Beginner |
-| 02 | [run-tests-in-ci](./02-run-tests-in-ci/) | Beginner |
+| 01 | [your-first-github-actions-workflow](./01-your-first-github-actions-workflow/) | Beginner |
+| 02 | [test-and-lint-on-push](./02-test-and-lint-on-push/) | Beginner |
 | 03 | [build-and-push-docker-image](./03-build-and-push-docker-image/) | Beginner |
-| 04 | [matrix-builds](./04-matrix-builds/) | Intermediate |
-| 05 | [caching-dependencies](./05-caching-dependencies/) | Intermediate |
-| 06 | [secrets-and-environment-variables](./06-secrets-and-environment-variables/) | Intermediate |
-| 07 | [jenkins-pipeline-basics](./07-jenkins-pipeline-basics/) | Intermediate |
-| 08 | [fix-a-broken-pipeline](./08-fix-a-broken-pipeline/) | Advanced |
-| 09 | [pipeline-optimization](./09-pipeline-optimization/) | Advanced |
-| 10 | [reusable-workflows](./10-reusable-workflows/) | Advanced |
+| 04 | [environment-variables-and-secrets](./04-environment-variables-and-secrets/) | Intermediate |
+| 05 | [matrix-builds](./05-matrix-builds/) | Intermediate |
+| 06 | [caching-dependencies](./06-caching-dependencies/) | Intermediate |
+| 07 | [reusable-workflows](./07-reusable-workflows/) | Intermediate |
+| 08 | [manual-approvals-and-environments](./08-manual-approvals-and-environments/) | Advanced |
+| 09 | [jenkins-pipeline-basics](./09-jenkins-pipeline-basics/) | Advanced |
+| 10 | [ci-for-pull-requests](./10-ci-for-pull-requests/) | Advanced |
 
 ## Prerequisites
 
@@ -25,7 +25,7 @@ Build fast, reliable continuous integration pipelines — and learn to debug the
 
 ## Tools Covered
 
-- GitHub Actions (workflows, jobs, steps, triggers, secrets, environments)
-- Jenkins (declarative pipeline, Jenkinsfile)
+- GitHub Actions (workflows, jobs, steps, triggers, secrets, environments, matrix, caching, reusable workflows)
+- Jenkins (declarative pipeline, Jenkinsfile, Docker agent)
 - Docker build and push
-- GitHub Container Registry (GHCR)
+- DockerHub / GitHub Container Registry (GHCR)
