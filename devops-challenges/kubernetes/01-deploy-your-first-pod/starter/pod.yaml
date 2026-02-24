@@ -1,0 +1,24 @@
+# BUG: This manifest has 5 errors. Apply it and read the error messages to find them.
+# Use: kubectl apply -f pod.yaml --dry-run=client
+
+# BUG 1: apiVersion is missing entirely
+
+kind: pod   # BUG 2: kind must be CamelCase
+
+metadata:
+  name: devops-app
+  labels:
+    app: devops-app
+
+spec:
+  restartPolicy: Never
+
+  containers:
+    - name: app
+      image: devops-app:latest   # BUG 3: always pin to a specific tag, never use :latest
+
+      # BUG 4: containerPort is missing — the app listens on 5000
+
+      env:
+        - name: APP_ENV
+          value: development
