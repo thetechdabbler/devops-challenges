@@ -1,0 +1,17 @@
+plugin: ec2              # BUG 2: wrong plugin name — should be amazon.aws.aws_ec2
+
+regions:
+  - us-east-1
+
+filters:
+  instance-state-name: running
+  tags.Environment: production   # BUG 3: wrong tag filter syntax — should be 'tag:Environment'
+
+keyed_groups:
+  - key: tags.Name
+    prefix: name
+
+hostnames:
+  - private-ip-address
+
+# BUG 5: missing compose block — ansible_host not set, Ansible can't SSH to instances
