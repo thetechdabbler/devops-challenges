@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-app
+  # BUG 4: Add annotations.kubernetes.io/change-cause to record what changed
+spec:
+  replicas: 3
+  # BUG 2: revisionHistoryLimit is missing — add revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: devops-app
+  # BUG 1: strategy is missing — add RollingUpdate with maxUnavailable: 1 and maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: devops-app
+    spec:
+      containers:
+        - name: app
+          image: devops-app:latest   # BUG 3: pin to devops-app:1.0.0
+          ports:
+            - containerPort: 5000
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
