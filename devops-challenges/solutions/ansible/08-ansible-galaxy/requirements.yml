@@ -1,0 +1,7 @@
+roles:
+  - name: geerlingguy.nginx
+    version: "3.2.0"
+
+  - name: geerlingguy.mysql
+    src: https://github.com/geerlingguy/ansible-role-mysql
+    version: "3.4.0"

@@ -1,0 +1,7 @@
+---
+- name: Configure web and db servers
+  hosts: all
+  become: true
+  roles:
+    - nginx          # BUG 3: wrong role name — Galaxy installs as 'geerlingguy.nginx'
+    - geerlingguy.mysql
