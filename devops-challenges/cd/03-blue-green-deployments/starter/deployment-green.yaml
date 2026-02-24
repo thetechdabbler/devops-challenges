@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-app-green
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: devops-app
+      version: green
+  template:
+    metadata:
+      labels:
+        app: devops-app
+        # BUG 3: missing version: green label — pods won't match the green Service selector
+    spec:
+      containers:
+        - name: app
+          image: devops-app:1.1.0
+          ports:
+            - containerPort: 5000
+          # BUG 4: no readinessProbe — traffic can reach green before pods are healthy
