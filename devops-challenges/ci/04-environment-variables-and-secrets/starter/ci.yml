@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pytest
+        env:
+          APP_ENV: test   # BUG 2: set this at job level, not per-step
+
+      - name: Run tests
+        run: pytest
+        env:
+          APP_ENV: test           # BUG 2: duplicated — should be at job level
+          API_KEY: "abc123secret" # BUG 1: hardcoded secret — use ${{ secrets.API_KEY }}
+
+      - name: Print API key (for debugging)
+        # BUG 3: never print secrets, even masked ones
+        run: echo "API key is $API_KEY"
+        env:
+          API_KEY: "abc123secret"
+
+      # BUG 4: no validation that API_KEY is set
+      # BUG 5: no environments configured for staging/prod
