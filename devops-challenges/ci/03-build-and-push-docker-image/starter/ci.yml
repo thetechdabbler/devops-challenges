@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt pytest
+      - run: pytest
+
+  build-and-push:
+    # BUG 1: this job runs unconditionally — add: needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # BUG 5: missing setup-buildx step
+
+      - name: Login to Docker Hub
+        # BUG 2: hardcoded password — use docker/login-action with secrets
+        run: docker login -u myuser -p my-hardcoded-password
+
+      - name: Build image
+        # BUG 3: only tagged :latest — add a SHA tag
+        # BUG 4: use docker/build-push-action instead of plain docker build/push
+        run: |
+          docker build -t myuser/devops-app:latest .
+          docker push myuser/devops-app:latest
