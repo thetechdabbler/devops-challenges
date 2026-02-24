@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: dev-limits
+spec:
+  limits:
+    - type: Container
+      default:
+        memory: 128Mi
+        cpu: 500m
+      defaultRequest:
+        memory: 64Mi
+        cpu: 100m
+      max:
+        memory: 4Gi    # BUG 3: too high for dev — use 512Mi
+        cpu: "8"
+      min:
+        memory: 16Mi
+        cpu: 10m
