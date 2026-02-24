@@ -1,0 +1,35 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+# BUG 4: No concurrency group — add one here
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - run: pip install -r requirements.txt pytest && pytest
+
+  deploy-staging:
+    needs: test
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: https://staging.example.com   # BUG 3: should come from vars.STAGING_URL
+    steps:
+      - run: echo "Deploying to staging..."
+
+  deploy-prod:
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+    # BUG 1 & 2: No environment: block — add environment: production
+    # This makes the job wait for approval if the environment has protection rules
+    steps:
+      - run: echo "Deploying to production..."   # this runs immediately without approval!
