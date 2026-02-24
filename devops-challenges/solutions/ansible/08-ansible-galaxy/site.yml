@@ -1,0 +1,7 @@
+---
+- name: Configure web and db servers
+  hosts: all
+  become: true
+  roles:
+    - geerlingguy.nginx
+    - geerlingguy.mysql
