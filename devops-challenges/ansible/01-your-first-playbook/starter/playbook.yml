@@ -1,0 +1,13 @@
+!---                          # BUG 1: stray '!' before '---' — invalid YAML document start
+- name: Install and start nginx
+  host: webservers            # BUG 2: should be 'hosts' (plural)
+  becom: true                 # BUG 3: typo — should be 'become'
+
+  tasks:
+    - name: Install nginx
+      ansible.builtin.apt_package:   # BUG 4: 'apt_package' is not a valid module — use 'apt'
+        name: nginx
+        state: present
+        update_cache: true
+
+    # BUG 5: missing task to start the nginx service
