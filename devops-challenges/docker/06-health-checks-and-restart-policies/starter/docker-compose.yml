@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    # TODO 1: Add restart: unless-stopped
+
+  worker:
+    image: busybox
+    command: sh -c "echo 'worker started' && sleep infinity"
+    depends_on:
+      # TODO 2: Change this so worker waits for app to be healthy, not just started
+      - app
