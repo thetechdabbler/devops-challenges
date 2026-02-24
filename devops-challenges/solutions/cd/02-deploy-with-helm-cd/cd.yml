@@ -1,0 +1,32 @@
+name: CD — Deploy with Helm
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: "3.14.0"
+
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Deploy
+        run: |
+          helm upgrade devops-app ./chart \
+            --install \
+            --atomic \
+            --timeout 5m \
+            --namespace prod \
+            --create-namespace \
+            --set image.tag=${{ github.sha }}

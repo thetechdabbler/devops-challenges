@@ -1,0 +1,32 @@
+name: CD — Deploy with Helm
+
+on:
+  push:
+    branches: [main]
+
+env:
+  KUBECONFIG_DATA: "apiVersion: v1\nclusters:\n- cluster:\n    server: https://..."  # BUG 4: raw kubeconfig in env var — use a secret
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: "3.14.0"
+
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "$KUBECONFIG_DATA" > ~/.kube/config
+
+      - name: Deploy
+        run: |
+          helm upgrade devops-app ./chart \  # BUG 1: missing --install
+            --namespace prod \               # BUG 2: missing --wait (fire and forget)
+            --set image.tag=${{ github.sha }}
+          # BUG 3: no --timeout (pipeline can hang indefinitely)
+          # BUG 5: no --atomic (failed deploys are not rolled back)
