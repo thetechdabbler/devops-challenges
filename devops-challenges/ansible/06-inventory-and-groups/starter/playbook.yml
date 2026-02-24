@@ -1,0 +1,10 @@
+---
+- name: Configure web servers
+  hosts: web          # BUG 1: wrong group name — should be 'webservers'
+  become: true
+
+  tasks:
+    - name: Configure nginx port
+      ansible.builtin.template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/sites-available/default

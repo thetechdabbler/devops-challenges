@@ -1,0 +1,5 @@
+# BUG 2: this is a file named 'webservers' — should be 'webservers.yml'
+# Ansible won't automatically load this without the .yml extension
+---
+http_port: 80
+nginx_worker_processes: auto
