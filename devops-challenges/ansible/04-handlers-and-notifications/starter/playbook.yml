@@ -1,0 +1,27 @@
+---
+- name: Deploy app with handler management
+  hosts: appservers
+  become: true
+
+  handlers:
+    - name: Restart app service     # BUG 1: handler named 'Restart app service' but tasks notify 'Reload app'
+      ansible.builtin.service:
+        name: myapp
+        state: restarted            # BUG 2: should be 'reloaded' to avoid downtime
+
+  tasks:
+    - name: Deploy main config
+      ansible.builtin.template:
+        src: config.j2
+        dest: /etc/myapp/config.conf
+      notify: Reload app            # BUG 1 (continued): notifies wrong name
+
+    - name: Deploy secondary config
+      ansible.builtin.template:
+        src: extra_config.j2
+        dest: /etc/myapp/extra.conf
+      notify: Reload app
+
+    - name: Force handlers now      # BUG 3 & 5: unconditional flush_handlers called mid-play
+      meta: flush_handlers
+      # This runs handlers even if no tasks changed anything

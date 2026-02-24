@@ -1,0 +1,23 @@
+---
+- name: Deploy app with handler management
+  hosts: appservers
+  become: true
+
+  handlers:
+    - name: Reload app
+      ansible.builtin.service:
+        name: myapp
+        state: reloaded
+
+  tasks:
+    - name: Deploy main config
+      ansible.builtin.template:
+        src: config.j2
+        dest: /etc/myapp/config.conf
+      notify: Reload app
+
+    - name: Deploy secondary config
+      ansible.builtin.template:
+        src: extra_config.j2
+        dest: /etc/myapp/extra.conf
+      notify: Reload app
