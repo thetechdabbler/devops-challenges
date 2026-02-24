@@ -3,7 +3,7 @@
 ## Project Information
 - **Project Type**: Greenfield
 - **Start Date**: 2026-02-24T00:00:00Z
-- **Current Stage**: INCEPTION - Workflow Planning Complete
+- **Current Stage**: INCEPTION - Units Generation Complete
 
 ## Workspace State
 - **Existing Code**: No
@@ -39,7 +39,7 @@
 - [ ] User Stories - SKIPPED (content repo, no user personas)
 - [x] Workflow Planning
 - [ ] Application Design - SKIPPED (no software components/services)
-- [ ] Units Generation - NEXT
+- [x] Units Generation - COMPLETE
 
 ### CONSTRUCTION PHASE
 - [ ] Functional Design - SKIPPED (no business logic)
@@ -55,5 +55,5 @@
 ## Current Status
 - **Lifecycle Phase**: INCEPTION
 - **Current Stage**: Workflow Planning Complete
-- **Next Stage**: Units Generation
+- **Next Stage**: Code Generation - Unit 1: repo-scaffolding
 - **Status**: Awaiting user approval of execution plan
