@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: devops-app
+  template:
+    metadata:
+      labels:
+        app: devops-app
+    spec:
+      volumes:
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: app-uploads
+      containers:
+        - name: app
+          image: devops-app:1.0.0
+          ports:
+            - containerPort: 5000
+          volumeMounts:
+            - name: uploads
+              mountPath: /app/uploads
+              subPath: uploads

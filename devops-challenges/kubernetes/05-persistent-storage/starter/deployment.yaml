@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: devops-app
+  template:
+    metadata:
+      labels:
+        app: devops-app
+    spec:
+      # BUG 1: volumes block is missing — add a PVC volume here
+
+      containers:
+        - name: app
+          image: devops-app:1.0.0
+          ports:
+            - containerPort: 5000
+          # BUG 1: volumeMounts is also missing — mount the PVC at /app/uploads
+          # BUG 4: no subPath — add subPath: uploads to isolate this app's data
