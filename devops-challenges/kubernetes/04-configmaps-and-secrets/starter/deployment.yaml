@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: devops-app
+  template:
+    metadata:
+      labels:
+        app: devops-app
+    spec:
+      volumes:
+        - name: secrets
+          secret:
+            secretName: app-secrets
+      containers:
+        - name: app
+          image: devops-app:1.0.0
+          ports:
+            - containerPort: 5000
+
+          # BUG 1: These are hardcoded — replace with envFrom: configMapRef
+          env:
+            - name: APP_ENV
+              value: production         # should come from ConfigMap
+            - name: DB_PASSWORD
+              value: super-secret-password   # BUG 2: plaintext secret in manifest!
+
+          volumeMounts:
+            - name: secrets
+              mountPath: /config        # BUG 5: should be /run/secrets
+              readOnly: true
