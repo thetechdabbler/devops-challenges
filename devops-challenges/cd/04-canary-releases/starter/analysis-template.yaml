@@ -1,0 +1,7 @@
+# TODO: Create an AnalysisTemplate named "success-rate" that:
+# 1. Queries Prometheus for HTTP success rate (non-5xx / total)
+# 2. Succeeds when success rate >= 95%
+# 3. Fails after 3 consecutive failures
+# 4. Runs every 1 minute
+#
+# Hint: use apiVersion: argoproj.io/v1alpha1 / kind: AnalysisTemplate
