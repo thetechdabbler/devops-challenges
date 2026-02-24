@@ -1,0 +1,20 @@
+apiVersion: flagger.app/v1beta1
+kind: Canary
+metadata:
+  name: devops-app
+  namespace: prod
+spec:
+  # BUG 1: missing provider — Flagger doesn't know which ingress/mesh to use
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: devops-app
+  service:
+    port: 80
+    targetPort: 5000
+  analysis:
+    interval: "5s"     # BUG 5: too short — Prometheus data not stable at 5s
+    threshold: 0       # BUG 3: zero tolerance — first bad data point aborts rollout
+    maxWeight: 50
+    stepWeight: 0      # BUG 2: no traffic shift — canary stays at 0% forever
+    # BUG 4: missing metrics block — no analysis criteria for promotion
