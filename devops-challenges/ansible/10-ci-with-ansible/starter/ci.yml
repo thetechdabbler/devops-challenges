@@ -1,0 +1,30 @@
+name: Ansible CI
+
+# BUG 1: no branch filter — runs on every push to every branch
+on:
+  push:
+
+env:
+  ANSIBLE_VAULT_PASSWORD: "supersecret"  # BUG 2: plaintext vault password in YAML
+
+jobs:
+  ansible:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Ansible
+        run: pip install ansible
+
+      # BUG 3: no ansible-lint step
+
+      # BUG 5: no SSH key setup — Ansible can't connect to hosts
+
+      - name: Write vault password
+        run: echo "$ANSIBLE_VAULT_PASSWORD" > .vault_pass
+
+      - name: Run playbook
+        run: |
+          ansible-playbook -i inventory.ini playbook.yml \
+            --vault-password-file .vault_pass
+          # BUG 4: missing --check flag — runs live changes in CI
