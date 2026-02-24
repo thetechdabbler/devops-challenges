@@ -1,0 +1,24 @@
+---
+- name: Configure database connection
+  hosts: appservers
+  become: true
+
+  vars_files:
+    - vars/main.yml
+    - vars/vault.yml
+
+  tasks:
+    - name: Write DB config
+      ansible.builtin.template:
+        src: db_config.j2
+        dest: /etc/myapp/db.conf
+        mode: "0600"
+
+    - name: Debug non-secret connection info
+      ansible.builtin.debug:
+        msg: "Connecting as {{ db_user }} to {{ db_host }}/{{ db_name }}"
+
+    - name: Start app with DB password
+      ansible.builtin.command: >
+        /opt/myapp/bin/start --db-pass {{ db_password }}
+      no_log: true   # suppress command from output since it contains the password
