@@ -1,0 +1,5 @@
+---
+- name: Configure web servers
+  hosts: webservers
+  become: true
+  # BUG 4: missing roles: block — role is never applied

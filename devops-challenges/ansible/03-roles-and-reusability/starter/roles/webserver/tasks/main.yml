@@ -1,0 +1,16 @@
+---
+- name: Install nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+    update_cache: true
+
+- name: Deploy nginx config
+  ansible.builtin.template:
+    src: templates/nginx.conf.j2    # BUG 1: wrong path — should be nginx.conf.j2 (relative to role templates/)
+    dest: /etc/nginx/sites-available/default
+    mode: "0644"
+  notify: Restart nginx
+
+- name: Include additional tasks       # BUG 5: deprecated 'include' — use import_tasks or include_tasks
+  include: extra_tasks.yml

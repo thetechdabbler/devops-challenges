@@ -1,0 +1,2 @@
+---
+# BUG 2: handler is empty — tasks notify 'Restart nginx' but it's never defined
