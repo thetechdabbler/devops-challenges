@@ -1,0 +1,76 @@
+name: CD — Multi-Environment Promotion
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment to deploy to"
+        required: true
+        default: "dev"
+        type: choice
+        options: [dev, staging, production]
+
+env:
+  IMAGE_TAG: ${{ github.sha }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - run: pip install -r requirements.txt pytest
+      - run: pytest
+
+  deploy-dev:
+    needs: test
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
+          chmod 600 ~/.kube/config
+      - run: |
+          helm upgrade devops-app ./chart --install --atomic --timeout 5m \
+            --namespace dev --create-namespace \
+            --set image.tag=${{ env.IMAGE_TAG }}
+
+  deploy-staging:
+    needs: deploy-dev
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
+          chmod 600 ~/.kube/config
+      - run: |
+          helm upgrade devops-app ./chart --install --atomic --timeout 5m \
+            --namespace staging --create-namespace \
+            --set image.tag=${{ env.IMAGE_TAG }}
+
+  deploy-prod:
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
+          chmod 600 ~/.kube/config
+      - run: |
+          helm upgrade devops-app ./chart --install --atomic --timeout 5m \
+            --namespace prod --create-namespace \
+            --set image.tag=${{ env.IMAGE_TAG }}
