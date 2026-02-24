@@ -1,0 +1,18 @@
+version: "3.9"
+
+secrets:
+  db_password:
+    file: ./db_password.txt
+
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    environment:
+      - APP_ENV=${APP_ENV:-development}
+    secrets:
+      - db_password
+    restart: unless-stopped

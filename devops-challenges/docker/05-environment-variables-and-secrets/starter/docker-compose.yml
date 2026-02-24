@@ -1,0 +1,20 @@
+version: "3.9"
+
+# TODO: There are multiple problems in this file.
+# 1. Secrets are passed as plain environment variables — move DB_PASS to a Docker secret.
+# 2. There is no env_file: directive — add one pointing to .env.
+# 3. There is no secrets: top-level block — add one.
+
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_HOST=localhost
+      - DB_PORT=5432
+      - DB_USER=admin
+      - DB_PASS=super_secret_password_123   # TODO: move this to a Docker secret
+      - DB_NAME=myapp
+      - APP_ENV=development
+    # TODO: mount the db_password secret here
