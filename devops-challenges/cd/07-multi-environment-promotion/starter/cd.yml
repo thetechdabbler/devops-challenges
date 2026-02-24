@@ -1,0 +1,48 @@
+name: CD — Multi-Environment Promotion
+
+# BUG 5: no workflow_dispatch trigger for manual promotion
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt pytest
+      - run: pytest
+
+  deploy-dev:
+    # BUG 3: missing needs: test — deploys to dev even if tests fail
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          helm upgrade devops-app ./chart --install --atomic \
+            --namespace dev --set image.tag=${{ github.sha }}
+
+  deploy-staging:
+    # BUG 1: missing needs: deploy-dev — runs in parallel with dev
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          # BUG 4: re-resolves github.sha — not guaranteed to be same build as dev
+          helm upgrade devops-app ./chart --install --atomic \
+            --namespace staging --set image.tag=${{ github.sha }}
+
+  deploy-prod:
+    # BUG 1: missing needs: deploy-staging — runs in parallel with staging
+    # BUG 2: missing environment: production — no approval gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          helm upgrade devops-app ./chart --install --atomic \
+            --namespace prod --set image.tag=${{ github.sha }}
