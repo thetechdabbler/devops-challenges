@@ -1,31 +1,35 @@
 # CD Challenges
 
-Ship software reliably — from simple deploy-on-push to full GitOps with ArgoCD.
+Master continuous deployment — ship faster, safer, and with confidence using GitOps, progressive delivery, and automated rollbacks.
 
 ## Learning Path
 
 | # | Exercise | Level |
 |---|---------|-------|
-| 01 | [deploy-on-push-to-main](./01-deploy-on-push-to-main/) | Beginner |
-| 02 | [environment-promotion](./02-environment-promotion/) | Beginner |
-| 03 | [manual-approval-gates](./03-manual-approval-gates/) | Intermediate |
-| 04 | [rollback-strategies](./04-rollback-strategies/) | Intermediate |
-| 05 | [blue-green-deployment](./05-blue-green-deployment/) | Intermediate |
-| 06 | [canary-deployment](./06-canary-deployment/) | Intermediate |
-| 07 | [argocd-setup-and-sync](./07-argocd-setup-and-sync/) | Advanced |
-| 08 | [gitops-with-argocd](./08-gitops-with-argocd/) | Advanced |
-| 09 | [deployment-notifications](./09-deployment-notifications/) | Advanced |
-| 10 | [multi-environment-pipeline](./10-multi-environment-pipeline/) | Advanced |
+| 01 | [gitops-with-argocd](./01-gitops-with-argocd/) | Beginner |
+| 02 | [deploy-with-helm-cd](./02-deploy-with-helm-cd/) | Beginner |
+| 03 | [blue-green-deployments](./03-blue-green-deployments/) | Intermediate |
+| 04 | [canary-releases](./04-canary-releases/) | Intermediate |
+| 05 | [deployment-notifications](./05-deployment-notifications/) | Intermediate |
+| 06 | [rollback-strategies](./06-rollback-strategies/) | Intermediate |
+| 07 | [multi-environment-promotion](./07-multi-environment-promotion/) | Advanced |
+| 08 | [image-promotion-pipeline](./08-image-promotion-pipeline/) | Advanced |
+| 09 | [database-migrations-in-cd](./09-database-migrations-in-cd/) | Advanced |
+| 10 | [progressive-delivery-with-flagger](./10-progressive-delivery-with-flagger/) | Advanced |
 
 ## Prerequisites
 
-- CI exercises completed (pipelines already build the Docker image)
-- Kubernetes exercises completed (ArgoCD exercises deploy to K8s)
-- GitHub account with Actions enabled
+- Kubernetes cluster (minikube, kind, or cloud)
+- Helm 3 installed
+- ArgoCD or Flagger (exercise-specific)
+- GitHub account
 
 ## Tools Covered
 
-- GitHub Actions (deployment workflows, environments, approval gates)
-- Jenkins (deployment stages)
-- ArgoCD (GitOps sync, app management)
-- Deployment strategies (blue-green, canary, rolling)
+- ArgoCD (GitOps, sync policies, self-heal)
+- Helm (upgrade, atomic, rollback)
+- Argo Rollouts (canary, analysis templates)
+- Flagger (progressive delivery, nginx ingress)
+- kubectl rollout (history, undo, status)
+- Trivy + cosign (image scanning, signing)
+- Alembic (database migrations)
