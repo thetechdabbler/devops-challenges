@@ -1,0 +1,31 @@
+# BUG 1: This workflow uses on: push — it can't be called by other workflows.
+# Change to on: workflow_call and add inputs.
+
+name: Python CI (Reusable)
+
+on:
+  push:   # BUG 1: should be workflow_call
+
+# BUG 2: inputs block is missing
+# Add:
+# on:
+#   workflow_call:
+#     inputs:
+#       python-version:
+#         type: string
+#         default: "3.11"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"   # should use ${{ inputs.python-version }}
+          cache: "pip"
+          cache-dependency-path: requirements.txt
+
+      - run: pip install -r requirements.txt pytest
+      - run: pytest   # should use ${{ inputs.test-command }}

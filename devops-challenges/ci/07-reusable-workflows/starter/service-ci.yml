@@ -1,0 +1,20 @@
+name: Service CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    # BUG 3: uses: must be at the job level, not inside steps
+    # This is wrong — reusable workflows are called as job-level uses:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run shared CI
+        uses: ./.github/workflows/python-ci.yml   # BUG 3: must be at job level
+        with:
+          python-version: "3.12"
+
+    # BUG 4: secrets: inherit is missing
