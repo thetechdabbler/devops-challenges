@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: devops-app
+  template:
+    metadata:
+      labels:
+        app: devops-app
+    spec:
+      containers:
+        - name: app
+          image: devops-app:1.0.0
+          ports:
+            - containerPort: 5000
+
+          # BUG 1: readinessProbe is missing entirely
+          # The Service routes traffic to this pod immediately on start,
+          # before the app is ready. Add a readinessProbe on /ready.
+
+          livenessProbe:
+            httpGet:
+              path: /      # BUG 4: should probe /health, not /
+              port: 5000
+            initialDelaySeconds: 0   # BUG 3: kills the pod before it starts!
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          # BUG 2: no startupProbe — for a slow-starting app, consider adding one
