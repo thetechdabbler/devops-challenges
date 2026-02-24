@@ -1,0 +1,38 @@
+name: CD — Deploy with Notifications
+
+on:
+  push:
+    branches: [main]
+
+env:
+  SLACK_WEBHOOK: "https://hooks.slack.com/services/T00000/B00000/XXXX"  # BUG 2: hardcoded webhook
+
+jobs:
+  notify:  # BUG 4: notify runs in parallel with deploy — it should need: [deploy]
+    runs-on: ubuntu-latest
+    # BUG 1: no if: failure() — this always runs, even on success
+    steps:
+      - name: Send Slack notification
+        run: |
+          curl -X POST "$SLACK_WEBHOOK" \
+            -H 'Content-type: application/json' \
+            -d '{
+              "text": "Deployment finished"
+            }'
+        # BUG 3: message doesn't include status, branch, commit, or run URL
+        # BUG 5: no continue-on-error: true — a broken webhook kills the pipeline
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
+      - name: Deploy
+        run: |
+          helm upgrade devops-app ./chart \
+            --install --atomic --timeout 5m \
+            --namespace prod \
+            --set image.tag=${{ github.sha }}

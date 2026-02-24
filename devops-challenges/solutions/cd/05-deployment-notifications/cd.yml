@@ -1,0 +1,45 @@
+name: CD — Deploy with Notifications
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
+          chmod 600 ~/.kube/config
+      - name: Deploy
+        run: |
+          helm upgrade devops-app ./chart \
+            --install --atomic --timeout 5m \
+            --namespace prod \
+            --set image.tag=${{ github.sha }}
+
+  notify-on-failure:
+    needs: deploy
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Slack failure alert
+        run: |
+          curl -s -X POST "${{ secrets.SLACK_WEBHOOK }}" \
+            -H 'Content-type: application/json' \
+            -d '{
+              "text": ":red_circle: *Deploy Failed*",
+              "attachments": [{
+                "color": "danger",
+                "fields": [
+                  {"title": "Repo", "value": "${{ github.repository }}", "short": true},
+                  {"title": "Branch", "value": "${{ github.ref_name }}", "short": true},
+                  {"title": "Commit", "value": "${{ github.sha }}", "short": true},
+                  {"title": "Run", "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Run>", "short": true}
+                ]
+              }]
+            }'
+        continue-on-error: true
