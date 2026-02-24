@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: devops-app-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  # BUG 1: ingressClassName is missing from spec (not metadata) — see below
+spec:
+  # BUG 1: Add ingressClassName: nginx here
+
+  tls:
+    - hosts:
+        - devops-app.local
+      secretName: tls-secret   # BUG 4: secret doesn't exist; create it first as devops-app-tls
+
+  rules:
+    - host: myapp.example.com   # BUG 2: use devops-app.local for local dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: devops-app-svc   # must match your Service name
+                port:
+                  number: 80
