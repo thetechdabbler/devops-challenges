@@ -1,0 +1,60 @@
+name: CD — Deploy with Rollback
+
+on:
+  push:
+    branches: [main]
+
+env:
+  APP_NAME: devops-app
+  NAMESPACE: prod
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Deploy
+        run: |
+          kubectl set image deployment/$APP_NAME \
+            app=devops-app:${{ github.sha }} \
+            -n $NAMESPACE
+          kubectl rollout status deployment/$APP_NAME -n $NAMESPACE --timeout=3m
+
+  rollback:
+    needs: deploy
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Roll back deployment
+        run: |
+          kubectl rollout undo deployment/$APP_NAME -n $NAMESPACE
+          kubectl rollout status deployment/$APP_NAME -n $NAMESPACE --timeout=3m
+
+      - name: Notify rollback
+        run: |
+          curl -s -X POST "${{ secrets.SLACK_WEBHOOK }}" \
+            -H 'Content-type: application/json' \
+            -d '{
+              "text": ":rewind: *Rollback triggered* for `${{ env.APP_NAME }}`",
+              "attachments": [{
+                "color": "warning",
+                "fields": [
+                  {"title": "Commit", "value": "${{ github.sha }}", "short": true},
+                  {"title": "Branch", "value": "${{ github.ref_name }}", "short": true}
+                ]
+              }]
+            }'
+        continue-on-error: true
