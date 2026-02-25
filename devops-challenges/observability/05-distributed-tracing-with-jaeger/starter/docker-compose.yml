@@ -1,0 +1,9 @@
+services:
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "4317:4317"    # OTLP gRPC
+      - "4318:4318"    # OTLP HTTP
+      - "16868:16686"  # BUG 3: host port transposed — should be 16686:16686
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
