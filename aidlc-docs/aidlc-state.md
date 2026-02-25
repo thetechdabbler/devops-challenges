@@ -1,9 +1,58 @@
 # AI-DLC State Tracking
 
+---
+
+## Project 2 — DevOps Practice Portal
+
 ## Project Information
 - **Project Type**: Greenfield
-- **Start Date**: 2026-02-24T00:00:00Z
-- **Current Stage**: INCEPTION - Units Generation Complete
+- **Start Date**: 2026-02-25T00:00:00Z
+- **Current Stage**: INCEPTION - Requirements Analysis Complete
+
+## Workspace State
+- **Existing Code**: No (portal is new)
+- **Reverse Engineering Needed**: No
+- **Workspace Root**: /Users/codespeech/practice/DevOpsTeacher
+- **Content Source**: devops-challenges/ (existing, read-only)
+
+## Technology Stack
+- Frontend: React + Vite (SPA)
+- Backend: Node.js + Express (REST API)
+- Database: PostgreSQL
+- Auth: GitHub OAuth + Passport.js + JWT (httpOnly cookies)
+- Deployment: Self-hosted VPS via Docker Compose
+
+## Stage Progress (Portal)
+
+### INCEPTION PHASE
+- [x] Workspace Detection
+- [ ] Reverse Engineering - SKIPPED (greenfield)
+- [x] Requirements Analysis
+- [ ] User Stories - SKIPPED (single persona, requirements clear)
+- [x] Workflow Planning - COMPLETE
+- [x] Application Design - COMPLETE
+- [x] Units Generation - COMPLETE
+
+### CONSTRUCTION PHASE
+- [x] Functional Design - Unit 1: setup - COMPLETE
+- [x] NFR Requirements - Unit 1: setup - COMPLETE
+- [x] NFR Design - Unit 1: setup - COMPLETE
+- [ ] Infrastructure Design - TBD
+- [ ] Code Generation - PENDING (per unit)
+- [ ] Build and Test - PENDING
+
+### OPERATIONS PHASE
+- [ ] Operations - PLACEHOLDER
+
+## Current Status
+- **Lifecycle Phase**: CONSTRUCTION
+- **Current Stage**: NFR Design — Unit 1: setup COMPLETE
+- **Next Stage**: Infrastructure Design (Unit 1: setup)
+- **Status**: Awaiting user approval of NFR Design
+
+---
+
+## Project 1 — DevOps Challenges Content Repo (COMPLETE)
 
 ## Workspace State
 - **Existing Code**: No

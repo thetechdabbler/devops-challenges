@@ -1,153 +1,123 @@
 # Unit of Work — Story Map
+# DevOps Practice Portal
 
-> Note: User Stories stage was skipped (content repository, no user personas).
-> This map uses the exercise list as the equivalent of stories — each exercise is a learnable unit of value.
-
----
-
-## Unit 1: repo-scaffolding
-
-| Exercise / Task | Type | Priority |
-|----------------|------|---------|
-| Root README (overview, learning path, how to use) | Foundation | Must-have |
-| .gitignore | Foundation | Must-have |
-| shared-resources/app (Python Flask web server) | Foundation | Must-have |
-| shared-resources/README.md | Foundation | Must-have |
-| solutions/ directory | Foundation | Must-have |
-| Per-topic README.md stubs (8 files) | Foundation | Must-have |
+> Note: User Stories stage was skipped (single persona, requirements clear).
+> This map uses Functional Requirements (FR-01–FR-08) and Non-Functional Requirements
+> (NFR-01–NFR-05) from `portal-requirements.md` as the equivalent of stories.
 
 ---
 
-## Unit 2: docker
+## Requirements Coverage Matrix
 
-| Exercise | Level | Key Skill |
-|---------|-------|-----------|
-| 01-build-your-first-container | Beginner | Dockerfile, docker build/run |
-| 02-multi-stage-builds | Beginner | Build size reduction, multi-stage |
-| 03-docker-compose-basics | Beginner | Multi-container apps, compose file |
-| 04-optimize-image-size | Intermediate | Layer caching, .dockerignore, slim images |
-| 05-environment-variables-and-secrets | Intermediate | ENV, ARG, secrets handling |
-| 06-health-checks-and-restart-policies | Intermediate | HEALTHCHECK, restart policies |
-| 07-networking-between-containers | Intermediate | Bridge networks, DNS, service discovery |
-| 08-production-hardening | Advanced | Non-root user, read-only FS, capabilities |
-| 09-debugging-a-broken-container | Advanced | docker logs, exec, inspect, layer debugging |
-| 10-multi-platform-builds | Advanced | buildx, ARM/AMD64, Docker Hub push |
-
----
-
-## Unit 3: kubernetes
-
-| Exercise | Level | Key Skill |
-|---------|-------|-----------|
-| 01-deploy-your-first-pod | Beginner | Pod spec, kubectl run/apply |
-| 02-deployments-and-services | Beginner | Deployment, Service (ClusterIP/NodePort) |
-| 03-configmaps-and-secrets | Beginner | ConfigMap, Secret, env injection |
-| 04-resource-limits-and-requests | Intermediate | CPU/memory requests and limits |
-| 05-liveness-and-readiness-probes | Intermediate | HTTP/exec probes, misconfigured probe debugging |
-| 06-ingress-and-routing | Intermediate | Ingress controller, path routing |
-| 07-helm-charts-basics | Intermediate | helm install, values.yaml, templating |
-| 08-persistent-volumes | Advanced | PVC, StorageClass, stateful apps |
-| 09-rbac-and-service-accounts | Advanced | Role, RoleBinding, ServiceAccount |
-| 10-debug-a-broken-deployment | Advanced | CrashLoopBackOff, OOMKilled, ImagePullBackOff |
+| Requirement | Unit 1 setup | Unit 2 auth | Unit 3 content-api | Unit 4 progress | Unit 5 notes | Unit 6 frontend-shell |
+|-------------|:---:|:---:|:---:|:---:|:---:|:---:|
+| FR-01 Exercise Browsing | | | ✓ API | | | ✓ UI |
+| FR-02 Content Viewer | | | ✓ API | | | ✓ UI |
+| FR-03 Progress Tracking | | | | ✓ API+UI | | ✓ wire |
+| FR-04 Timed Sessions | | | | ✓ API+UI | | ✓ wire |
+| FR-05 Notes per Exercise | | | | | ✓ API+UI | ✓ wire |
+| FR-06 Global Scratch Pad | | | | | ✓ API+UI | ✓ wire |
+| FR-07 Authentication | ✓ schema | ✓ API | | | | ✓ UI |
+| FR-08 Progress Dashboard | | | ✓ units data | ✓ progress data | | ✓ UI |
+| NFR-01 Performance | | | ✓ cache | | | ✓ lazy load |
+| NFR-02 Security | ✓ env/secrets | ✓ JWT/OAuth/CORS | ✓ read-only | | | |
+| NFR-03 Usability | | | | | | ✓ responsive |
+| NFR-04 Reliability | ✓ DB pool | | ✓ graceful 404 | ✓ session in DB | | |
+| NFR-05 Deployment | ✓ Docker Compose | | | | | |
 
 ---
 
-## Unit 4: ci
+## Per-Unit Requirement Detail
 
-| Exercise | Level | Key Skill |
-|---------|-------|-----------|
-| 01-first-github-actions-workflow | Beginner | .github/workflows, triggers, jobs |
-| 02-run-tests-in-ci | Beginner | Test runner in workflow, pass/fail |
-| 03-build-and-push-docker-image | Beginner | docker/build-push-action, GHCR |
-| 04-matrix-builds | Intermediate | matrix strategy, multiple OS/versions |
-| 05-caching-dependencies | Intermediate | actions/cache, pip/npm caching |
-| 06-secrets-and-environment-variables | Intermediate | GitHub Secrets, env context |
-| 07-jenkins-pipeline-basics | Intermediate | Jenkinsfile, declarative pipeline |
-| 08-fix-a-broken-pipeline | Advanced | Debugging failed workflows, error interpretation |
-| 09-pipeline-optimization | Advanced | Parallel jobs, skip conditions, time reduction |
-| 10-reusable-workflows | Advanced | workflow_call, composite actions |
+### Unit 1: setup
 
----
-
-## Unit 5: cd
-
-| Exercise | Level | Key Skill |
-|---------|-------|-----------|
-| 01-deploy-on-push-to-main | Beginner | Trigger on push, SSH deploy |
-| 02-environment-promotion | Beginner | Dev → Staging → Prod pattern |
-| 03-manual-approval-gates | Intermediate | environments, required reviewers |
-| 04-rollback-strategies | Intermediate | Revert deployment, previous image tag |
-| 05-blue-green-deployment | Intermediate | Two environments, traffic switch |
-| 06-canary-deployment | Intermediate | Incremental traffic shift |
-| 07-argocd-setup-and-sync | Advanced | ArgoCD install, app sync |
-| 08-gitops-with-argocd | Advanced | Git as source of truth, reconciliation |
-| 09-deployment-notifications | Advanced | Slack/email notifications on deploy |
-| 10-multi-environment-pipeline | Advanced | Full dev/staging/prod pipeline |
+| Requirement | Deliverable |
+|-------------|------------|
+| FR-07 — Auth (schema) | `users` table: `id`, `github_id`, `username`, `avatar_url`, `created_at` |
+| FR-03 — Progress (schema) | `exercise_progress` table: `id`, `user_id`, `unit`, `exercise`, `status` (enum), `updated_at` |
+| FR-04 — Sessions (schema) | `sessions` table: `id`, `user_id`, `unit`, `exercise`, `started_at`, `ended_at`, `duration_seconds` |
+| FR-05/06 — Notes (schema) | `notes` table: `id`, `user_id`, `unit` (nullable), `exercise` (nullable), `content`, `updated_at` |
+| NFR-02 — Security | `.env.example` defines all secrets; `.gitignore` excludes `.env` |
+| NFR-04 — Reliability | Prisma connection pooling configured; server waits for DB on startup |
+| NFR-05 — Deployment | `docker-compose.yml` with `backend`, `frontend` (nginx), `postgres` services; `GET /health` returns 200 |
 
 ---
 
-## Unit 6: ansible
+### Unit 2: auth
 
-| Exercise | Level | Key Skill |
-|---------|-------|-----------|
-| 01-first-playbook | Beginner | YAML playbook, hosts, tasks |
-| 02-inventory-and-groups | Beginner | Inventory file, host groups |
-| 03-variables-and-templates | Beginner | vars, Jinja2 templates |
-| 04-handlers-and-notifications | Intermediate | notify, handler blocks |
-| 05-roles-structure | Intermediate | roles/ layout, defaults, tasks |
-| 06-ansible-vault-secrets | Intermediate | vault encrypt/decrypt, vault-id |
-| 07-idempotency-patterns | Intermediate | Idempotent tasks, check mode |
-| 08-ansible-galaxy-roles | Advanced | galaxy install, requirements.yml |
-| 09-dynamic-inventory | Advanced | AWS/GCP dynamic inventory scripts |
-| 10-debug-a-broken-playbook | Advanced | -vvv debugging, register, assert |
+| Requirement | Deliverable |
+|-------------|------------|
+| FR-07 — Authentication | GitHub OAuth via Passport.js; JWT signed with `JWT_SECRET`; httpOnly cookie set on successful login; user upserted from GitHub profile on first login |
+| NFR-02 — Security | JWT in `httpOnly; SameSite=Strict` cookie (not localStorage); CORS restricted to `FRONTEND_URL`; `AuthMiddleware` applied to all `/api/*` routes; 401 on invalid or missing token |
 
 ---
 
-## Unit 7: iac
+### Unit 3: content-api
 
-| Exercise | Level | Key Skill |
-|---------|-------|-----------|
-| 01-terraform-first-resource | Beginner | provider, resource, terraform init/apply |
-| 02-variables-and-outputs | Beginner | variable, output, tfvars |
-| 03-terraform-state | Beginner | terraform.tfstate, state file concepts |
-| 04-terraform-modules | Intermediate | module block, reusable modules |
-| 05-remote-state-backend | Intermediate | S3 backend, state locking with DynamoDB |
-| 06-cloudformation-basics | Intermediate | YAML template, stack create/update |
-| 07-cloudformation-stacks | Intermediate | Nested stacks, parameters, outputs |
-| 08-detect-and-fix-drift | Advanced | terraform plan drift, cloudformation drift detection |
-| 09-terraform-workspaces | Advanced | workspace per environment |
-| 10-refactor-monolith-stack | Advanced | Split large stack, module extraction |
+| Requirement | Deliverable |
+|-------------|------------|
+| FR-01 — Exercise Browsing | `GET /api/content/units` — returns `UnitMeta[]` with all 8 units and their 10 exercises each |
+| FR-02 — Content Viewer | `GET /api/content/:unit/:exercise/:file` — returns `{ content: string }` (raw markdown) |
+| FR-08 — Dashboard (units) | Units index provides the unit/exercise structure for Dashboard progress bars |
+| NFR-01 — Performance | `ContentService` caches file content per `(unit, exercise, file)` key after first read; units index built once at startup |
+| NFR-02 — Security | `ContentService` is read-only — no write path exists to `devops-challenges/` |
+| NFR-04 — Reliability | `NotFoundError` thrown for missing files → `ErrorMiddleware` maps to 404 JSON response; no server crash |
 
 ---
 
-## Unit 8: observability
+### Unit 4: progress
 
-| Exercise | Level | Key Skill |
-|---------|-------|-----------|
-| 01-expose-prometheus-metrics | Beginner | /metrics endpoint, prometheus scrape config |
-| 02-first-grafana-dashboard | Beginner | Grafana datasource, panels, PromQL basics |
-| 03-alerting-rules | Beginner | PrometheusRule, Alertmanager basics |
-| 04-structured-logging | Intermediate | JSON logs, log levels, correlation IDs |
-| 05-opentelemetry-instrumentation | Intermediate | OTel SDK, traces, spans |
-| 06-distributed-tracing-with-jaeger | Intermediate | Jaeger backend, trace visualization |
-| 07-slo-and-error-budgets | Intermediate | SLI/SLO definition, burn rate alerts |
-| 08-missing-monitoring | Advanced | Identify gaps, add metrics to an unmonitored app |
-| 09-trace-a-slow-request | Advanced | Latency profiling, span analysis |
-| 10-full-observability-stack | Advanced | Logs + metrics + traces end-to-end |
+| Requirement | Deliverable |
+|-------------|------------|
+| FR-03 — Progress Tracking | `GET /api/progress` all user progress; `PUT /api/progress/:unit/:exercise` status upsert; `StatusSelector` component with Not Started / In Progress / Completed |
+| FR-04 — Timed Sessions | `POST /api/sessions/start` creates active session; `POST /api/sessions/end` computes `duration_seconds`; `GET /api/sessions/:unit/:exercise` returns sessions + `totalSeconds`; `TimerWidget` shows HH:MM:SS, resumes active session on mount |
+| FR-08 — Dashboard (progress) | `useProgressStore` data consumed by Dashboard to display totals and per-unit progress |
+| NFR-04 — Reliability | Active session stored in DB — timer continues if browser closes; `endActive()` computes duration on the server side |
 
 ---
 
-## Unit 9: aws
+### Unit 5: notes
 
-| Exercise | Level | Key Skill |
-|---------|-------|-----------|
-| 01-iam-users-and-policies | Beginner | IAM user, policy, least-privilege |
-| 02-launch-an-ec2-instance | Beginner | EC2, key pair, security group, SSH |
-| 03-s3-bucket-and-policies | Beginner | S3 create, bucket policy, ACL |
-| 04-vpc-and-subnets | Intermediate | VPC, public/private subnets, route tables |
-| 05-security-groups-and-nacls | Intermediate | Inbound/outbound rules, stateless vs stateful |
-| 06-deploy-to-ecs-fargate | Intermediate | ECS task definition, Fargate service |
-| 07-rds-setup-and-access | Intermediate | RDS instance, security group, connection |
-| 08-lambda-and-api-gateway | Advanced | Lambda function, API Gateway trigger |
-| 09-cross-account-iam-roles | Advanced | AssumeRole, trust policies |
-| 10-cost-optimization-audit | Advanced | Cost Explorer, right-sizing, unused resources |
+| Requirement | Deliverable |
+|-------------|------------|
+| FR-05 — Notes per Exercise | `GET /api/notes/:unit/:exercise` and `PUT /api/notes/:unit/:exercise`; `NotesEditor` with CodeMirror, preview toggle, and 1-second debounce auto-save |
+| FR-06 — Global Scratch Pad | `GET /api/notes/global` and `PUT /api/notes/global` (`unit = null`, `exercise = null` in DB); `GlobalScratchPad` component accessible from `AppLayout` sidebar on all pages |
+
+---
+
+### Unit 6: frontend-shell
+
+| Requirement | Deliverable |
+|-------------|------------|
+| FR-01 — Exercise Browsing | `UnitBrowser` page (unit cards with progress summary); `ExerciseBrowser` page (exercise list with status badge and time spent) |
+| FR-02 — Content Viewer | `ExerciseViewer` page with tabbed content (README / Challenge / Resources), rendered via `react-markdown`, prev/next navigation |
+| FR-03 — Progress Tracking | `StatusSelector` wired into `ExerciseViewer`; status badges in `ExerciseBrowser` |
+| FR-04 — Timed Sessions | `TimerWidget` wired into `ExerciseViewer`; time totals in `ExerciseBrowser` |
+| FR-05 — Notes | `NotesEditor` wired into `ExerciseViewer` |
+| FR-06 — Global Scratch Pad | `GlobalScratchPad` in `AppLayout` sidebar — accessible from every page |
+| FR-07 — Authentication | `AuthPage` (sign in with GitHub button); `OAuthCallback` (hydrates auth store after OAuth redirect); protected routes redirect unauthenticated users to `/` |
+| FR-08 — Progress Dashboard | `Dashboard` page — total exercises completed (N/80), per-unit progress bars (N/10), total time spent, last 5 accessed exercises |
+| NFR-01 — Performance | `useContentStore` loads exercise markdown lazily on navigation (not all upfront) |
+| NFR-03 — Usability | Responsive CSS layout (desktop + tablet min 768px); keyboard navigable (Tab, Enter, Arrow key support) |
+
+---
+
+## Coverage Verification
+
+All requirements are covered — no gaps.
+
+| ID | Requirement | Primary Unit | Supporting Units |
+|----|-------------|-------------|-----------------|
+| FR-01 | Exercise Browsing | 3 | 6 |
+| FR-02 | Content Viewer | 3 | 6 |
+| FR-03 | Progress Tracking | 4 | 6 |
+| FR-04 | Timed Sessions | 4 | 6 |
+| FR-05 | Notes per Exercise | 5 | 6 |
+| FR-06 | Global Scratch Pad | 5 | 6 |
+| FR-07 | Authentication | 2 | 1, 6 |
+| FR-08 | Progress Dashboard | 6 | 3, 4 |
+| NFR-01 | Performance | 3 | 6 |
+| NFR-02 | Security | 2 | 1, 3 |
+| NFR-03 | Usability | 6 | — |
+| NFR-04 | Reliability | 1 | 3, 4 |
+| NFR-05 | Deployment | 1 | — |

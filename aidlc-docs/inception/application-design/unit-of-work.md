@@ -1,231 +1,256 @@
-# Units of Work
-## DevOps Challenge Repository
+# Units of Work — DevOps Practice Portal
 
 ---
 
-## Unit 1: repo-scaffolding
+## Code Organization Strategy
 
-**Type**: Foundation unit (must complete before all others)
+**Directory layout** (Q1: `portal/` subdirectory):
 
-**Responsibilities**:
-- Initialize repository root structure (`devops-challenges/` layout)
-- Create root `README.md` (overview, learning path, how to use the repo)
-- Create root `.gitignore`
-- Create `shared-resources/` directory with sample application (small HTTP web server used across all topic exercises)
-- Create topic-level `README.md` files for each of the 8 topic directories (placeholder structure, filled by each topic unit)
-- Create `solutions/` top-level directory
-
-**Deliverables**:
 ```
-devops-challenges/
-├── README.md
-├── .gitignore
-├── shared-resources/
-│   ├── README.md
-│   └── app/                  # Simple web server (Python Flask or Node.js)
-│       ├── app.py / index.js
-│       ├── requirements.txt / package.json
-│       └── README.md
-├── solutions/
-├── docker/README.md
-├── kubernetes/README.md
-├── ci/README.md
-├── cd/README.md
-├── ansible/README.md
-├── iac/README.md
-├── observability/README.md
-└── aws/README.md
+DevOpsTeacher/
+├── devops-challenges/          (existing, read-only content source)
+├── portal/
+│   ├── backend/                (Node.js + Express + TypeScript)
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── Dockerfile
+│   │   ├── prisma/
+│   │   │   └── schema.prisma
+│   │   └── src/
+│   │       ├── controllers/
+│   │       ├── services/
+│   │       ├── repositories/
+│   │       ├── middleware/
+│   │       ├── routes/
+│   │       ├── lib/
+│   │       └── index.ts
+│   ├── frontend/               (React + Vite + TypeScript)
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── vite.config.ts
+│   │   ├── Dockerfile
+│   │   └── src/
+│   │       ├── api/
+│   │       ├── components/
+│   │       ├── pages/
+│   │       ├── stores/
+│   │       └── main.tsx
+│   ├── docker-compose.yml
+│   └── .env.example
+└── aidlc-docs/
 ```
 
-**Code organization**: Greenfield — create from scratch at workspace root.
+**Package management** (Q2: separate `package.json` per package):
+- `portal/backend/package.json` — backend dependencies and scripts (`dev`, `build`, `start`, `db:migrate`, `db:seed`)
+- `portal/frontend/package.json` — frontend dependencies and scripts (`dev`, `build`, `preview`)
+- Docker Compose handles runtime orchestration — no root-level package.json needed
 
 ---
 
-## Unit 2: docker
+## Unit 1: setup
 
-**Type**: Topic unit
+**Type**: Foundation + Infrastructure
+**Builds on**: Nothing (first unit)
 
 **Responsibilities**:
-- Generate 8–10 exercises covering Docker fundamentals through production hardening
-- Each exercise: `challenge.md`, `README.md`, `resources.md`, starter files
-- Each exercise: matching solution in `solutions/docker/<exercise-name>/`
-- Git commit + PR per exercise
+- Initialize `portal/backend/` and `portal/frontend/` directory skeletons
+- Configure TypeScript (`tsconfig.json`) for both packages
+- Set up Express application skeleton with global error middleware
+- Define Prisma schema with all 4 tables: `users`, `exercise_progress`, `sessions`, `notes`
+- Run initial Prisma migration
+- Write Docker Compose config: `backend`, `frontend` (nginx), and `postgres` services
+- Write `.env.example` with all required environment variables
+- Implement `GET /health` endpoint
 
-**Exercise progression**:
-| # | Name | Level |
-|---|------|-------|
-| 01 | build-your-first-container | Beginner |
-| 02 | multi-stage-builds | Beginner |
-| 03 | docker-compose-basics | Beginner |
-| 04 | optimize-image-size | Intermediate |
-| 05 | environment-variables-and-secrets | Intermediate |
-| 06 | health-checks-and-restart-policies | Intermediate |
-| 07 | networking-between-containers | Intermediate |
-| 08 | production-hardening | Advanced |
-| 09 | debugging-a-broken-container | Advanced |
-| 10 | multi-platform-builds | Advanced |
+**Key deliverables**:
+```
+portal/
+├── docker-compose.yml
+├── .env.example
+├── backend/
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── Dockerfile
+│   ├── prisma/schema.prisma
+│   └── src/
+│       ├── index.ts              (Express app wiring)
+│       ├── lib/prisma.ts         (PrismaClient singleton)
+│       ├── middleware/error.middleware.ts
+│       └── routes/health.ts
+└── frontend/
+    ├── package.json
+    ├── tsconfig.json
+    ├── vite.config.ts
+    └── Dockerfile
+```
+
+**Exit criteria**: `docker-compose up` starts all 3 services; `GET /health` returns `{ status: "ok" }`; Prisma migration applied with all 4 tables.
 
 ---
 
-## Unit 3: kubernetes
+## Unit 2: auth
 
-**Type**: Topic unit
+**Type**: Backend
+**Builds on**: Unit 1 (Prisma client + `users` table + Express app)
 
 **Responsibilities**:
-- Generate 8–10 exercises covering Kubernetes from first deployment to advanced troubleshooting
-- Uses shared-resources sample app for deployments
-- Targets Docker Desktop with Kubernetes enabled
+- Implement `UserRepository` (`findByGithubId`, `upsert`)
+- Implement `AuthService` (`upsertUser`, `generateJWT`, `verifyJWT`)
+- Implement `AuthController` (`initiateGitHubOAuth`, `handleOAuthCallback`, `logout`, `getMe`)
+- Implement `AuthMiddleware` (JWT extraction from httpOnly cookie, verification, `req.user` attachment)
+- Wire auth routes: `GET /auth/github`, `GET /auth/github/callback`, `POST /api/auth/logout`, `GET /api/me`
+- Configure Passport.js GitHub strategy
+- Configure CORS to allow only `FRONTEND_URL`
 
-**Exercise progression**:
-| # | Name | Level |
-|---|------|-------|
-| 01 | deploy-your-first-pod | Beginner |
-| 02 | deployments-and-services | Beginner |
-| 03 | configmaps-and-secrets | Beginner |
-| 04 | resource-limits-and-requests | Intermediate |
-| 05 | liveness-and-readiness-probes | Intermediate |
-| 06 | ingress-and-routing | Intermediate |
-| 07 | helm-charts-basics | Intermediate |
-| 08 | persistent-volumes | Advanced |
-| 09 | rbac-and-service-accounts | Advanced |
-| 10 | debug-a-broken-deployment | Advanced |
+**Key deliverables**:
+```
+backend/src/
+├── controllers/auth.controller.ts
+├── services/auth.service.ts
+├── repositories/user.repository.ts
+├── middleware/auth.middleware.ts
+└── routes/auth.routes.ts
+```
+
+**Exit criteria**: Full OAuth flow completes (GitHub → callback → JWT cookie set); `GET /api/me` returns user profile; unprotected request to `/api/*` returns 401.
 
 ---
 
-## Unit 4: ci
+## Unit 3: content-api
 
-**Type**: Topic unit
+**Type**: Backend
+**Builds on**: Unit 2 (`AuthMiddleware` must exist to protect content routes)
 
 **Responsibilities**:
-- Generate 8–10 exercises covering CI pipelines with GitHub Actions and Jenkins
-- Includes broken pipeline starter files for debugging exercises
+- Implement `ContentService` (`initialize` on startup, `getUnitsIndex`, `getFileContent` with in-memory cache)
+- Implement `ContentController` (`listUnits`, `getFile`)
+- Wire content routes: `GET /api/content/units`, `GET /api/content/:unit/:exercise/:file`
+- Mount `devops-challenges/` path from `CONTENT_PATH` environment variable
 
-**Exercise progression**:
-| # | Name | Level |
-|---|------|-------|
-| 01 | first-github-actions-workflow | Beginner |
-| 02 | run-tests-in-ci | Beginner |
-| 03 | build-and-push-docker-image | Beginner |
-| 04 | matrix-builds | Intermediate |
-| 05 | caching-dependencies | Intermediate |
-| 06 | secrets-and-environment-variables | Intermediate |
-| 07 | jenkins-pipeline-basics | Intermediate |
-| 08 | fix-a-broken-pipeline | Advanced |
-| 09 | pipeline-optimization | Advanced |
-| 10 | reusable-workflows | Advanced |
+**Key deliverables**:
+```
+backend/src/
+├── controllers/content.controller.ts
+├── services/content.service.ts
+└── routes/content.routes.ts
+```
+
+**Exit criteria**: `GET /api/content/units` returns all 8 units with exercise metadata; `GET /api/content/docker/01-build-your-first-container/challenge.md` returns markdown string; second call served from cache (no filesystem read).
 
 ---
 
-## Unit 5: cd
+## Unit 4: progress
 
-**Type**: Topic unit
+**Type**: Backend + Frontend
+**Builds on**: Unit 3 (auth middleware; content endpoints for frontend context)
 
-**Responsibilities**:
-- Generate 8–10 exercises covering CD pipelines, environment promotion, ArgoCD GitOps, and rollback
+**Backend responsibilities**:
+- Implement `ProgressRepository` (`findAllByUser`, `upsert`)
+- Implement `SessionRepository` (`create`, `endActive`, `findByExercise`)
+- Implement `ProgressService` (`getAllForUser`, `upsert`)
+- Implement `SessionService` (`start`, `end`, `getForExercise`)
+- Implement `ProgressController` (`getAllProgress`, `updateProgress`)
+- Implement `SessionsController` (`startSession`, `endSession`, `getExerciseSessions`)
+- Wire routes: `GET /api/progress`, `PUT /api/progress/:unit/:exercise`, `POST /api/sessions/start`, `POST /api/sessions/end`, `GET /api/sessions/:unit/:exercise`
 
-**Exercise progression**:
-| # | Name | Level |
-|---|------|-------|
-| 01 | deploy-on-push-to-main | Beginner |
-| 02 | environment-promotion | Beginner |
-| 03 | manual-approval-gates | Intermediate |
-| 04 | rollback-strategies | Intermediate |
-| 05 | blue-green-deployment | Intermediate |
-| 06 | canary-deployment | Intermediate |
-| 07 | argocd-setup-and-sync | Advanced |
-| 08 | gitops-with-argocd | Advanced |
-| 09 | deployment-notifications | Advanced |
-| 10 | multi-environment-pipeline | Advanced |
+**Frontend responsibilities**:
+- Implement `useProgressStore` (Zustand — `load`, `updateStatus`, `startSession`, `endSession`)
+- Implement `TimerWidget` component (HH:MM:SS display, Start/Stop, resume active session on mount)
+- Implement `StatusSelector` component (Not Started / In Progress / Completed)
 
----
+**Key deliverables**:
+```
+backend/src/
+├── controllers/progress.controller.ts
+├── controllers/sessions.controller.ts
+├── services/progress.service.ts
+├── services/session.service.ts
+├── repositories/progress.repository.ts
+├── repositories/session.repository.ts
+└── routes/progress.routes.ts + sessions.routes.ts
 
-## Unit 6: ansible
+frontend/src/
+├── stores/progress.store.ts
+└── components/
+    ├── TimerWidget.tsx
+    └── StatusSelector.tsx
+```
 
-**Type**: Topic unit
-
-**Responsibilities**:
-- Generate 8–10 exercises covering Ansible from playbook basics to Galaxy roles
-
-**Exercise progression**:
-| # | Name | Level |
-|---|------|-------|
-| 01 | first-playbook | Beginner |
-| 02 | inventory-and-groups | Beginner |
-| 03 | variables-and-templates | Beginner |
-| 04 | handlers-and-notifications | Intermediate |
-| 05 | roles-structure | Intermediate |
-| 06 | ansible-vault-secrets | Intermediate |
-| 07 | idempotency-patterns | Intermediate |
-| 08 | ansible-galaxy-roles | Advanced |
-| 09 | dynamic-inventory | Advanced |
-| 10 | debug-a-broken-playbook | Advanced |
+**Exit criteria**: Progress status persists across page refresh; timer survives page reload (active session restored from DB on mount); total time accumulates correctly across multiple sessions.
 
 ---
 
-## Unit 7: iac
+## Unit 5: notes
 
-**Type**: Topic unit
+**Type**: Backend + Frontend
+**Builds on**: Unit 3 (auth middleware; exercise context for per-exercise note keys)
 
-**Responsibilities**:
-- Generate 8–10 exercises covering Terraform and AWS CloudFormation
+**Backend responsibilities**:
+- Implement `NoteRepository` (`findByExercise` with nullable unit/exercise for global, `upsert`)
+- Implement `NoteService` (`get`, `upsert` — global vs per-exercise distinguished by `unit = null AND exercise = null`)
+- Implement `NotesController` (`getNote`, `saveNote` — handles both exercise and global routes)
+- Wire routes: `GET /api/notes/:unit/:exercise`, `PUT /api/notes/:unit/:exercise`, `GET /api/notes/global`, `PUT /api/notes/global`
 
-**Exercise progression**:
-| # | Name | Level |
-|---|------|-------|
-| 01 | terraform-first-resource | Beginner |
-| 02 | variables-and-outputs | Beginner |
-| 03 | terraform-state | Beginner |
-| 04 | terraform-modules | Intermediate |
-| 05 | remote-state-backend | Intermediate |
-| 06 | cloudformation-basics | Intermediate |
-| 07 | cloudformation-stacks | Intermediate |
-| 08 | detect-and-fix-drift | Advanced |
-| 09 | terraform-workspaces | Advanced |
-| 10 | refactor-monolith-stack | Advanced |
+**Frontend responsibilities**:
+- Implement `useNotesStore` (Zustand — `getNote`, `saveNote`)
+- Implement `NotesEditor` component (CodeMirror editor + debounced auto-save at 1-second + preview toggle)
+- Implement `GlobalScratchPad` component (wrapper around `NotesEditor` for global note, no unit/exercise)
 
----
+**Key deliverables**:
+```
+backend/src/
+├── controllers/notes.controller.ts
+├── services/note.service.ts
+├── repositories/note.repository.ts
+└── routes/notes.routes.ts
 
-## Unit 8: observability
+frontend/src/
+├── stores/notes.store.ts
+└── components/
+    ├── NotesEditor.tsx
+    └── GlobalScratchPad.tsx
+```
 
-**Type**: Topic unit
-
-**Responsibilities**:
-- Generate 8–10 exercises covering OpenTelemetry, Jaeger, Prometheus, and Grafana
-
-**Exercise progression**:
-| # | Name | Level |
-|---|------|-------|
-| 01 | expose-prometheus-metrics | Beginner |
-| 02 | first-grafana-dashboard | Beginner |
-| 03 | alerting-rules | Beginner |
-| 04 | structured-logging | Intermediate |
-| 05 | opentelemetry-instrumentation | Intermediate |
-| 06 | distributed-tracing-with-jaeger | Intermediate |
-| 07 | slo-and-error-budgets | Intermediate |
-| 08 | missing-monitoring | Advanced |
-| 09 | trace-a-slow-request | Advanced |
-| 10 | full-observability-stack | Advanced |
+**Exit criteria**: Notes auto-save after 1-second debounce; per-exercise note and global scratch pad stored in separate DB rows; CodeMirror renders with preview toggle.
 
 ---
 
-## Unit 9: aws
+## Unit 6: frontend-shell
 
-**Type**: Topic unit
+**Type**: Frontend
+**Builds on**: Units 2, 3, 4, 5 (all backend endpoints must be available)
 
 **Responsibilities**:
-- Generate 8–10 exercises covering core AWS services (IAM, EC2, VPC, S3, ECS, RDS, Lambda)
-- Includes cost-awareness notes and free-tier alternatives
+- Set up React Router v6 with routes:
+  - `/` — `AuthPage`
+  - `/auth/callback` — `OAuthCallback`
+  - `/dashboard` — `Dashboard`
+  - `/units` — `UnitBrowser`
+  - `/units/:unit` — `ExerciseBrowser`
+  - `/units/:unit/:exercise` — `ExerciseViewer`
+- Implement `apiClient.ts` (typed fetch wrapper for all 16 endpoints; throws `ApiError` on non-2xx)
+- Implement `useAuthStore` and `useContentStore` Zustand stores
+- Implement page components: `AuthPage`, `OAuthCallback`, `AppLayout`, `Dashboard`, `UnitBrowser`, `ExerciseBrowser`, `ExerciseViewer`
+- Wire `TimerWidget`, `StatusSelector`, `NotesEditor`, `GlobalScratchPad` into `ExerciseViewer` and `AppLayout`
+- Apply responsive layout (desktop and tablet, min 768px)
+- Keyboard navigation support
 
-**Exercise progression**:
-| # | Name | Level |
-|---|------|-------|
-| 01 | iam-users-and-policies | Beginner |
-| 02 | launch-an-ec2-instance | Beginner |
-| 03 | s3-bucket-and-policies | Beginner |
-| 04 | vpc-and-subnets | Intermediate |
-| 05 | security-groups-and-nacls | Intermediate |
-| 06 | deploy-to-ecs-fargate | Intermediate |
-| 07 | rds-setup-and-access | Intermediate |
-| 08 | lambda-and-api-gateway | Advanced |
-| 09 | cross-account-iam-roles | Advanced |
-| 10 | cost-optimization-audit | Advanced |
+**Key deliverables**:
+```
+frontend/src/
+├── main.tsx
+├── App.tsx                     (router setup)
+├── api/apiClient.ts
+├── stores/
+│   ├── auth.store.ts
+│   └── content.store.ts
+└── pages/
+    ├── AuthPage.tsx
+    ├── OAuthCallback.tsx
+    ├── Dashboard.tsx
+    ├── UnitBrowser.tsx
+    ├── ExerciseBrowser.tsx
+    └── ExerciseViewer.tsx
+```
+
+**Exit criteria**: Complete user journey works end-to-end — sign in with GitHub → dashboard → browse units → open exercise → read tabbed content → start timer → set status → write notes → global scratch pad → sign out → redirect to auth page.
