@@ -1,0 +1,18 @@
+filebeat.inputs:
+  - type: logs_file         # BUG 4: invalid type — should be "log" or "filestream"
+    enabled: true
+    paths:
+      - /var/log/app/*.log
+    json.keys_under_root: true
+
+output.elasticsearch:
+  hosts: ["elasticsearch:9300"]   # BUG 1: wrong port — HTTP API is 9200
+  index: "filebeat-%{[agent.version]}-%{+YYYY.MM}"   # BUG 2: date format should be yyyy.MM.dd
+
+setup.kibana:
+  host: "kibana:5061"       # BUG 3: transposed digits — should be 5601
+
+# BUG 5: missing setup.ilm.enabled: false
+
+setup.template.name: "filebeat"
+setup.template.pattern: "filebeat-*"
