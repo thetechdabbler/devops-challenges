@@ -1,0 +1,20 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: positions.yaml    # BUG 5: must be absolute path, e.g. /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/api/v1/push   # BUG 1: missing "loki/" prefix in path
+
+scrape_configs:
+  - job_name: app
+    static_configs:
+      - targets: [localhost]
+        # BUG 3: missing labels block — no job label or __path__ defined
+
+    pipeline_stages:
+      - json_parse:            # BUG 2: invalid stage name — should be "json:"
+          level: level
+          msg: message
