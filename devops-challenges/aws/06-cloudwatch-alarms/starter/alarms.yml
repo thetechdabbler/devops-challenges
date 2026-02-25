@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: CloudWatch Alarms
+
+Parameters:
+  InstanceId:
+    Type: String
+
+Resources:
+  HighCPUAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: HighCPU
+      MetricName: CPUUtilization
+      Namespace: AWS/Compute           # BUG 2: should be AWS/EC2
+      Dimensions:
+        - Name: InstanceId
+          Value: !Ref InstanceId
+      Statistic: Average
+      Period: 10                       # BUG 5: minimum period is 60 seconds
+      EvaluationPeriods: 1             # BUG 3: too short — use 3 with DatapointsToAlarm: 2
+      Threshold: 80
+      ComparisonOperator: LessThanOrEqualToThreshold   # BUG 1: wrong direction — should be GreaterThanOrEqualToThreshold
+      AlarmActions:
+        - "arn:aws:sns:us-east-1:123456789012:alerts:"  # BUG 4: trailing colon in ARN
+      TreatMissingData: notBreaching
