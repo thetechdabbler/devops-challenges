@@ -1,8 +1,0 @@
-apiVersion: 1
-datasources:
-  - name: Prometheus
-    type: prometheus     # FIX 1: correct type
-    access: proxy        # FIX 2: server-side proxy access
-    url: http://prometheus:9090
-    uid: prometheus-ds
-    isDefault: true

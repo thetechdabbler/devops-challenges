@@ -1,56 +1,62 @@
-# Solution — Resource Dependencies
+# Step-by-Step Solution — Resource Dependencies
 
-## Fixes Applied
+## Bug 1 — Security group ID passed as name string
 
-### Fix 1 & 4: Use resource reference with `.id` for security group
+`vpc_security_group_ids` expects a list of security group **IDs**, not a list of names.
 
 ```hcl
-# Before
+# Wrong
 vpc_security_group_ids = [aws_security_group.web.name]
 
-# After
+# Fixed
 vpc_security_group_ids = [aws_security_group.web.id]
 ```
 
-`vpc_security_group_ids` requires a list of security group IDs (strings like `sg-abc123`). Using `.name` gives the human-readable name, not the AWS ID — causing an API error. Using the resource reference also creates an implicit dependency so the SG is created before the EC2 instance.
+This also creates an implicit dependency so Terraform creates the SG before the instance.
 
-### Fix 2: Replace hardcoded subnet ID
+## Bug 2 — Hardcoded subnet ID
+
+Hardcoding `"subnet-12345"` breaks the dependency graph and won't work in any real account.
 
 ```hcl
-# Before
+# Wrong
 subnet_id = "subnet-12345"
 
-# After
+# Fixed
 subnet_id = aws_subnet.main.id
 ```
 
-Hardcoded IDs break portability — they only work in the specific AWS account and region where they were created. Using the resource reference creates an implicit dependency and works anywhere.
+## Bug 3 — Missing explicit `depends_on`
 
-### Fix 3: IGW already has implicit dependency (not a real bug)
+The challenge hinted at a `depends_on` bug. The route table association must exist before the instance is useful, but Terraform doesn't automatically connect them. Adding `depends_on` makes the ordering explicit if needed.
 
-The `aws_internet_gateway.main` already uses `vpc_id = aws_vpc.main.id`, creating an implicit dependency. No fix needed here.
+_(In the starter this is represented by the hardcoded subnet ID in Bug 2 — fixing that reference resolves the ordering.)_
 
-### Fix 5: Use `.id` for route table association
+## Bug 4 — Attribute `.name` instead of `.id` in security group reference
+
+`.name` is the string `"web-sg"`, not the AWS security group ID (`sg-xxxx`). The API rejects names in the `vpc_security_group_ids` field.
 
 ```hcl
-# Before
-subnet_id = aws_subnet.main.name   # .name doesn't exist on subnet
+vpc_security_group_ids = [aws_security_group.web.id]
+```
 
-# After
+## Bug 5 — Route table association uses `.name` instead of `.id`
+
+`aws_route_table_association.subnet_id` must be the subnet resource ID, not its name tag.
+
+```hcl
+# Wrong
+subnet_id = aws_subnet.main.name
+
+# Fixed
 subnet_id = aws_subnet.main.id
 ```
 
-`aws_subnet` doesn't have a `.name` attribute — it has a `tags` map. Using `.name` causes `terraform validate` to fail with "Unsupported attribute".
+## Verify
 
----
-
-## Result
-
-Terraform builds the dependency graph:
-```
-aws_vpc → aws_subnet → aws_route_table_association
-       → aws_internet_gateway → aws_route_table
-       → aws_security_group → aws_instance
+```bash
+terraform validate
+terraform plan
 ```
 
-All resources are created in the correct order automatically.
+The plan should show all resources with proper dependency ordering.

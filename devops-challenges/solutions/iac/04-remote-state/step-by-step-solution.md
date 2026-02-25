@@ -1,64 +1,68 @@
-# Solution — Remote State
+# Step-by-Step Solution — Remote State
 
-## Fixes Applied
+## Bug 1 — Wrong backend type `s3_bucket`
 
-### Fix 1: Backend type must be `"s3"`
+The S3 backend type is simply `"s3"`. There is no `"s3_bucket"` type.
 
 ```hcl
-# Before
-backend "s3_bucket" {
+# Wrong
+backend "s3_bucket" { ... }
 
-# After
-backend "s3" {
+# Fixed
+backend "s3" { ... }
 ```
 
-The Terraform S3 backend is named `"s3"`, not `"s3_bucket"`. An invalid backend name causes `terraform init` to fail with "Unknown backend type".
+## Bug 2 — Missing `encrypt = true`
 
-### Fix 2: Enable encryption
+S3 server-side encryption should always be enabled for state files containing sensitive resource attributes.
 
 ```hcl
 encrypt = true
 ```
 
-Without encryption, the tfstate file is stored as plaintext in S3. State files often contain sensitive data (passwords, private keys). `encrypt = true` enables server-side encryption using S3's default KMS key.
+## Bug 3 — Missing `dynamodb_table`
 
-### Fix 3: Enable state locking with DynamoDB
+Without a DynamoDB table for locking, multiple simultaneous `terraform apply` runs can corrupt state.
 
 ```hcl
-dynamodb_table = "terraform-state-lock"
+dynamodb_table = "devops-tf-locks"
 ```
 
-Without a DynamoDB table, multiple team members or CI jobs running `terraform apply` simultaneously can corrupt the state file. DynamoDB provides a distributed lock that prevents concurrent operations.
+Create the table first:
+```bash
+aws dynamodb create-table \
+  --table-name devops-tf-locks \
+  --attribute-definitions AttributeName=LockID,AttributeType=S \
+  --key-schema AttributeName=LockID,KeyType=HASH \
+  --billing-mode PAY_PER_REQUEST
+```
 
-### Fix 4: Use workspace-aware state key
+## Bug 4 — State key not workspace-aware
+
+All workspaces shared the same `terraform.tfstate` key, causing them to overwrite each other.
 
 ```hcl
-# Before
+# Wrong
 key = "terraform.tfstate"
 
-# After
-key = "devops-app/${terraform.workspace}/terraform.tfstate"
+# Fixed
+key = "env:/${terraform.workspace}/terraform.tfstate"
 ```
 
-Using a workspace-aware key means each workspace (`dev`, `staging`, `prod`) gets its own isolated state file in S3. Without this, all workspaces share the same state — catastrophic if dev and prod use the same configuration.
+## Bug 5 — Missing `region`
 
-### Fix 5: Add region to backend
+The S3 backend requires `region` to know where the bucket lives.
 
 ```hcl
 region = "us-east-1"
 ```
 
-The S3 backend requires an explicit `region` argument. It cannot inherit the region from the `provider "aws"` block — backend configuration is evaluated before providers.
-
----
-
-## Result
+## Verify
 
 ```bash
-terraform init -reconfigure
-# Initializes backend in S3 with locking
-
+terraform init
 terraform workspace new staging
-terraform apply
-# State stored at: devops-app/staging/terraform.tfstate
+terraform plan
 ```
+
+State is stored at `s3://devops-tf-state/env:/staging/terraform.tfstate`.
