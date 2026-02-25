@@ -6,16 +6,16 @@ Learn the core AWS services used daily by DevOps and platform engineers.
 
 | # | Exercise | Level |
 |---|---------|-------|
-| 01 | [iam-users-and-policies](./01-iam-users-and-policies/) | Beginner |
-| 02 | [launch-an-ec2-instance](./02-launch-an-ec2-instance/) | Beginner |
-| 03 | [s3-bucket-and-policies](./03-s3-bucket-and-policies/) | Beginner |
-| 04 | [vpc-and-subnets](./04-vpc-and-subnets/) | Intermediate |
-| 05 | [security-groups-and-nacls](./05-security-groups-and-nacls/) | Intermediate |
-| 06 | [deploy-to-ecs-fargate](./06-deploy-to-ecs-fargate/) | Intermediate |
-| 07 | [rds-setup-and-access](./07-rds-setup-and-access/) | Intermediate |
-| 08 | [lambda-and-api-gateway](./08-lambda-and-api-gateway/) | Advanced |
-| 09 | [cross-account-iam-roles](./09-cross-account-iam-roles/) | Advanced |
-| 10 | [cost-optimization-audit](./10-cost-optimization-audit/) | Advanced |
+| 01 | [ec2-and-security-groups](./01-ec2-and-security-groups/) | Beginner |
+| 02 | [s3-and-iam](./02-s3-and-iam/) | Beginner |
+| 03 | [rds-and-secrets](./03-rds-and-secrets/) | Beginner |
+| 04 | [ecs-and-ecr](./04-ecs-and-ecr/) | Intermediate |
+| 05 | [lambda-and-api-gateway](./05-lambda-and-api-gateway/) | Intermediate |
+| 06 | [cloudwatch-alarms](./06-cloudwatch-alarms/) | Intermediate |
+| 07 | [elb-and-auto-scaling](./07-elb-and-auto-scaling/) | Intermediate |
+| 08 | [vpc-networking](./08-vpc-networking/) | Advanced |
+| 09 | [codepipeline-cicd](./09-codepipeline-cicd/) | Advanced |
+| 10 | [eks-cluster-setup](./10-eks-cluster-setup/) | Advanced |
 
 ## Prerequisites
 
@@ -26,13 +26,15 @@ Learn the core AWS services used daily by DevOps and platform engineers.
 ## Tools Covered
 
 - AWS CLI
-- IAM (users, roles, policies, least-privilege)
-- EC2 (instances, key pairs, security groups, user data)
-- VPC (subnets, route tables, internet gateway, NAT gateway)
-- S3 (buckets, policies, versioning)
-- ECS Fargate (task definitions, services, clusters)
-- RDS (instances, parameter groups, snapshots)
+- EC2 (instances, security groups, user data, key pairs)
+- S3 (buckets, policies, versioning) + IAM (roles, policies, least-privilege)
+- RDS (managed databases) + Secrets Manager
+- ECS Fargate (task definitions, services, clusters) + ECR
 - Lambda + API Gateway
-- Cost Explorer and Trusted Advisor
+- CloudWatch (alarms, metrics, logs, dashboards)
+- ELB (Application Load Balancer) + Auto Scaling Groups
+- VPC (subnets, route tables, NAT gateway, VPC endpoints)
+- CodePipeline + CodeBuild + CodeDeploy
+- EKS (managed Kubernetes cluster setup)
 
-> **Cost note**: Most exercises stay within the AWS free tier. Each challenge clearly notes resources that may incur charges and includes a cleanup section.
+> **Cost note**: Most exercises stay within the AWS free tier. Always run cleanup commands after completing each exercise.
