@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: RDS PostgreSQL with Secrets Manager
+
+Resources:
+  DBSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: prod/db/password
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "admin"}'
+        GenerateStringKey: password
+        PasswordLength: 32
+        ExcludeCharacters: '"@/\'
+
+  DBParameterGroup:
+    Type: AWS::RDS::DBParameterGroup
+    Properties:
+      DBParameterGroupFamily: postgres14   # BUG 3: should match engine version (postgres15)
+      Description: PostgreSQL 15 parameters
+
+  MyDB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      Engine: postgres
+      EngineVersion: "15"                  # BUG 1: needs patch version "15.4"
+      DBInstanceClass: db.t3.micro
+      AllocatedStorage: "20"
+      MasterUsername: admin
+      MasterUserPassword: !Sub "{{resolve:secretsmanager:${DBSecret}:SecretString:password}}"
+      PubliclyAccessible: true             # BUG 2: should be false
+      DBParameterGroupName: !Ref DBParameterGroup
+      BackupRetentionPeriod: 7
+    DeletionPolicy: Snapshot
