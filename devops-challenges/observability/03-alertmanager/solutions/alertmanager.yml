@@ -1,0 +1,23 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: "slack-notifications"   # FIX 2: matches receiver name below
+  group_by: [alertname, job]
+  group_wait: 30s
+  repeat_interval: 12h
+  routes:
+    - matchers:                       # FIX 1: modern matchers syntax
+        - severity = "critical"
+      receiver: "pagerduty"
+
+receivers:
+  - name: "slack-notifications"
+    slack_configs:
+      - slack_api_url: "https://hooks.slack.com/services/T00000/B00000/XXXX"  # FIX 3
+        channel: "#alerts"
+        title: "Alert: {{ .GroupLabels.alertname }}"
+
+  - name: "pagerduty"
+    pagerduty_configs:
+      - routing_key: "your-pagerduty-routing-key"
