@@ -1,32 +1,39 @@
 # Observability Challenges
 
-Instrument, monitor, and trace your applications — and learn to find problems before users do.
+Instrument, collect, visualize, and alert on metrics, logs, and traces.
 
 ## Learning Path
 
 | # | Exercise | Level |
 |---|---------|-------|
-| 01 | [expose-prometheus-metrics](./01-expose-prometheus-metrics/) | Beginner |
-| 02 | [first-grafana-dashboard](./02-first-grafana-dashboard/) | Beginner |
-| 03 | [alerting-rules](./03-alerting-rules/) | Beginner |
-| 04 | [structured-logging](./04-structured-logging/) | Intermediate |
-| 05 | [opentelemetry-instrumentation](./05-opentelemetry-instrumentation/) | Intermediate |
-| 06 | [distributed-tracing-with-jaeger](./06-distributed-tracing-with-jaeger/) | Intermediate |
-| 07 | [slo-and-error-budgets](./07-slo-and-error-budgets/) | Intermediate |
-| 08 | [missing-monitoring](./08-missing-monitoring/) | Advanced |
-| 09 | [trace-a-slow-request](./09-trace-a-slow-request/) | Advanced |
-| 10 | [full-observability-stack](./10-full-observability-stack/) | Advanced |
+| 01 | [prometheus-basics](./01-prometheus-basics/) | Beginner |
+| 02 | [grafana-dashboards](./02-grafana-dashboards/) | Beginner |
+| 03 | [alertmanager](./03-alertmanager/) | Beginner |
+| 04 | [logging-with-loki](./04-logging-with-loki/) | Intermediate |
+| 05 | [distributed-tracing-with-jaeger](./05-distributed-tracing-with-jaeger/) | Intermediate |
+| 06 | [opentelemetry-instrumentation](./06-opentelemetry-instrumentation/) | Intermediate |
+| 07 | [kubernetes-monitoring](./07-kubernetes-monitoring/) | Intermediate |
+| 08 | [log-aggregation-with-elk](./08-log-aggregation-with-elk/) | Advanced |
+| 09 | [synthetic-monitoring](./09-synthetic-monitoring/) | Advanced |
+| 10 | [slos-and-error-budgets](./10-slos-and-error-budgets/) | Advanced |
 
 ## Prerequisites
 
-- Docker Desktop running (all observability tools run via Docker Compose)
-- Kubernetes exercises helpful but not required
-- Basic understanding of HTTP and JSON
+- Docker and Docker Compose
+- `kubectl` configured (exercises 07+)
+- Basic understanding of YAML
 
 ## Tools Covered
 
-- Prometheus (scrape configs, PromQL, recording rules, alert rules)
-- Grafana (dashboards, datasources, panels, Alertmanager)
-- OpenTelemetry SDK (Python instrumentation)
-- Jaeger (distributed tracing backend, trace visualization)
-- Alertmanager (routing, inhibitions, silences)
+- Prometheus — scrape configs, PromQL, recording rules
+- Grafana — dashboards, panels, data source configuration
+- Alertmanager — routing, receivers, inhibition rules
+- Loki + Promtail — log aggregation and querying
+- Jaeger — distributed tracing, spans, sampling
+- OpenTelemetry — OTEL Collector pipeline configuration
+- kube-state-metrics, node-exporter, ServiceMonitor CRDs
+- Elasticsearch, Filebeat, Kibana (ELK stack)
+- Blackbox Exporter — synthetic/uptime monitoring
+- SLOs, error budgets, burn rate alerts
+
+> **Quick start**: Each exercise ships with a `docker-compose.yml` or Kubernetes manifests so you can run the stack locally.
