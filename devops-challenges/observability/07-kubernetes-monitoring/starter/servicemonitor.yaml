@@ -1,0 +1,16 @@
+apiVersion: monitoring.coreos.com/v1alpha1   # BUG 1: should be v1
+kind: ServiceMonitor
+metadata:
+  name: my-app
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  namespaceSelector: {}       # BUG 2: empty selector matches nothing — add matchNames: [default]
+  selector:
+    matchLabels:
+      app: my-app             # BUG 3: wrong label key — Service has app.kubernetes.io/name: my-app
+  endpoints:
+    - port: 8080              # BUG 4: must be named port, not number — use "metrics"
+      interval: 30            # BUG 5: missing unit — should be 30s
+      path: /metrics
