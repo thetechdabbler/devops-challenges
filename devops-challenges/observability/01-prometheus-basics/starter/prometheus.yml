@@ -1,0 +1,15 @@
+global:
+  scrape_interval: 15      # BUG 1: missing unit — should be 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  - job_name: "prometheus"         # BUG 4: duplicate job_name — should be "node"
+    metrics_path: /metric          # BUG 2: should be /metrics (plural)
+    honor_labels: true
+    static_configs:
+      - targets: "localhost:9100"  # BUG 3: must be a list ["localhost:9100"]
+        honor_labels: true         # BUG 5: honor_labels belongs at job level, not under static_configs
