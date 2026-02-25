@@ -1,0 +1,19 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.12
+  post_build:                      # BUG 1: post_build runs before build — wrong order
+    commands:
+      - docker push $IMAGE_URI
+      - printf '[{"name":"app","imageUri":"%s"}]' $IMAGE_URI > imagedefinitions.json
+  build:
+    commands:
+      - pip install -r requirements.txt
+      - pytest tests/
+      - docker build -t $IMAGE_URI .
+
+artifacts:
+  files:
+    - imagedefinitions.json
