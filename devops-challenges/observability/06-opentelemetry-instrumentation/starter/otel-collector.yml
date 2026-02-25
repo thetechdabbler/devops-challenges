@@ -1,0 +1,29 @@
+receivers:
+  otlp_grpc:               # BUG 1: wrong receiver name — should be "otlp"
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+
+exporters:
+  prometheus_exporter:     # BUG 2: wrong exporter name — should be "prometheus"
+    endpoint: "0.0.0.0:8889"
+  otlp/jaeger:
+    endpoint: jaeger        # BUG 5: missing port — should be jaeger:4317
+    tls:
+      insecure: true
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp_grpc]
+      processors: []        # BUG 3: empty processors invalid — use [batch]
+      exporters: [otlp/jaeger]
+    metrics:
+      receivers: [otlp_grpc]
+      processors: [batch]
+      exporters: [prom]     # BUG 4: "prom" not defined — should be "prometheus"
