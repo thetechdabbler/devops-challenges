@@ -1,0 +1,9 @@
+modules:
+  http_200_ok:              # BUG 1: name mismatch — Prometheus scrapes "http_2xx_check"
+    prober: https           # BUG 2: invalid prober — should be "http" (handles both HTTP and HTTPS)
+    timeout: 5s
+    http:
+      valid_status_codes: [200]
+      method: GET
+      preferred_ip_protocol: ipv6   # BUG 3: use ip4 for IPv4-only environments
+      follow_redirects: true
