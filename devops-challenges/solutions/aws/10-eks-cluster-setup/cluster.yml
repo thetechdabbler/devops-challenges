@@ -1,0 +1,20 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: devops-cluster
+  region: us-east-1
+  version: "1.31"    # FIX 1: current supported version
+
+iam:
+  withOIDC: true
+
+managedNodeGroups:
+  - name: ng-standard
+    instanceType: t3.medium
+    minSize: 1          # FIX 3: ensure at least one node
+    maxSize: 5
+    desiredCapacity: 2
+    amiType: AL2_x86_64   # FIX 2: standard x86 AMI
+    iam:
+      instanceRoleARN: "arn:aws:iam::123456789012:role/NodeRole"   # FIX 5: full ARN

@@ -1,0 +1,11 @@
+groups:
+  - name: app-alerts
+    rules:
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.05   # FIX 4: > comparison
+        for: 5m                                                        # FIX 5: duration unit
+        labels:
+          severity: critical
+        annotations:
+          summary: "High error rate detected on {{ $labels.job }}"
+          description: "Error rate is {{ $value | humanizePercentage }}"
