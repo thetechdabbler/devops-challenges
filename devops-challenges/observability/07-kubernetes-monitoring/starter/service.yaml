@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-app
+  namespace: default
+  labels:
+    app.kubernetes.io/name: my-app
+spec:
+  selector:
+    app: my-app
+  ports:
+    - name: metrics
+      port: 8080
+      targetPort: 8080

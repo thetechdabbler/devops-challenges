@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1    # FIX 1: correct API version
+kind: ServiceMonitor
+metadata:
+  name: my-app
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  namespaceSelector:
+    matchNames:               # FIX 2: target the default namespace
+      - default
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: my-app   # FIX 3: correct label key matching Service
+  endpoints:
+    - port: metrics           # FIX 4: named port from Service spec
+      interval: 30s           # FIX 5: duration with unit
+      path: /metrics
