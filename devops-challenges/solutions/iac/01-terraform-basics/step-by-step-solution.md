@@ -1,8 +1,8 @@
-# Solution — Terraform Basics
+# Step-by-Step Solution — Terraform Basics
 
-## Fixes Applied
+## Bug 1 — Missing `terraform {}` block
 
-### Fix 1: Add `terraform {}` block with required_providers
+The `terraform {}` block is required to declare which provider plugins Terraform should download. Without it, `terraform init` doesn't know to fetch the AWS provider.
 
 ```hcl
 terraform {
@@ -15,9 +15,9 @@ terraform {
 }
 ```
 
-Without this block, `terraform init` doesn't know which provider to download. The `source` identifies the provider on the Terraform Registry; `version` pins it.
+## Bug 2 — Missing `region` in provider block
 
-### Fix 2: Add `region` to provider block
+The AWS provider requires a region. Without it, Terraform errors: _"The argument 'region' is required."_
 
 ```hcl
 provider "aws" {
@@ -25,48 +25,38 @@ provider "aws" {
 }
 ```
 
-The AWS provider requires a region. Without it, Terraform falls back to `AWS_DEFAULT_REGION` environment variable — which may not be set, causing "No valid credential sources found" errors.
+## Bug 3 — Wrong resource type `aws_instance_v2`
 
-### Fix 3: Correct resource type
-
-```hcl
-# Before
-resource "aws_instance_v2" "web"
-
-# After
-resource "aws_instance" "web"
-```
-
-`aws_instance_v2` doesn't exist. Terraform raises `An argument named "aws_instance_v2" is not expected here` during `terraform validate`.
-
-### Fix 4: Fix AMI ID format
+The correct resource type is `aws_instance`. There is no `aws_instance_v2` type in the AWS provider.
 
 ```hcl
-# Before
-ami = "ami_0c55b159cbfafe1f0"   # underscore
+# Wrong
+resource "aws_instance_v2" "web" { ... }
 
-# After
-ami = "ami-0c55b159cbfafe1f0"   # dash
+# Fixed
+resource "aws_instance" "web" { ... }
 ```
 
-AMI IDs always use dashes. An underscore causes "InvalidAMIID.Malformed" from the AWS API.
+## Bug 4 — Underscore in AMI ID
 
-### Fix 5: Add `instance_type`
+AMI IDs use hyphens, not underscores: `ami-0c55b159cbfafe1f0` not `ami_0c55b159cbfafe1f0`.
+
+```hcl
+ami = "ami-0c55b159cbfafe1f0"
+```
+
+## Bug 5 — Missing `instance_type`
+
+`instance_type` is a required argument for `aws_instance`. Terraform will error without it.
 
 ```hcl
 instance_type = "t3.micro"
 ```
 
-`instance_type` is a required argument for `aws_instance`. Without it, `terraform validate` fails with "Missing required argument".
-
----
-
-## Result
+## Verify
 
 ```bash
-$ terraform validate
-Success! The configuration is valid.
-
-$ terraform plan
-Plan: 1 to add, 0 to change, 0 to destroy.
+terraform init
+terraform validate
+terraform plan
 ```

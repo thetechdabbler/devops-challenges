@@ -1,15 +1,8 @@
 output "instance_ip" {
-  value       = aws_instance.web[*].public_ip
-  description = "Public IPs of the web instances"
-}
-
-output "instance_id" {
-  value       = aws_instance.web[*].id
-  description = "EC2 instance IDs"
+  value = aws_instance.web[*].public_ip  # FIX 3: add required value argument
 }
 
 output "db_password" {
-  value       = var.db_password
-  description = "Database password"
-  sensitive   = true
+  value     = var.db_password
+  sensitive = true                        # FIX 4: mark sensitive output
 }

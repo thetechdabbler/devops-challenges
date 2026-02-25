@@ -1,60 +1,64 @@
-# Solution — Variables and Outputs
+# Step-by-Step Solution — Variables and Outputs
 
-## Fixes Applied
+## Bug 1 — Missing `type` in `instance_type` variable
 
-### Fix 1: Add `type = string` to variable
+Variables should always have a `type` constraint so Terraform can validate input.
 
 ```hcl
 variable "instance_type" {
-  type = string   # ← added
-  ...
+  type    = string
+  default = "t3.micro"
 }
 ```
 
-Without a type constraint, Terraform accepts any type for the variable. Adding `type = string` enables type checking and validation.
+## Bug 2 — String default for number variable
 
-### Fix 2: Default value must match type
+`instance_count` is declared as `number` but the default is `"1"` (a string). This causes a type mismatch.
 
 ```hcl
-# Before
-default = "1"   # string
+# Wrong
+default = "1"
 
-# After
-default = 1     # number
+# Fixed
+default = 1
 ```
 
-`variable "instance_count"` has `type = number`. A string default `"1"` causes `terraform validate` to error: "Invalid default value for variable... string is not compatible with number."
+## Bug 3 — Output missing `value` argument
 
-### Fix 3: Add `value =` to output
+`value` is required in every `output` block. Without it, Terraform errors during validate.
 
 ```hcl
 output "instance_ip" {
-  value       = aws_instance.web[*].public_ip   # ← added
-  description = "Public IP of the web instance"
+  value = aws_instance.web[*].public_ip
 }
 ```
 
-`value` is required for output blocks. Without it, `terraform validate` fails with "Missing required argument: value".
+## Bug 4 — Sensitive output not marked sensitive
 
-### Fix 4: Mark sensitive output
+Outputting a `sensitive` variable without `sensitive = true` on the output causes Terraform to error: _"Output refers to sensitive values."_
 
 ```hcl
 output "db_password" {
   value     = var.db_password
-  sensitive = true   # ← added
+  sensitive = true
 }
 ```
 
-Without `sensitive = true`, the password appears in plain text in `terraform output` and in CI logs. Marking it sensitive causes the value to be displayed as `<sensitive>`.
+## Bug 5 — Single `=` in validation condition
 
-### Fix 5: Fix validation condition operator
+`=` is assignment, `==` is comparison. The validation condition must be a boolean expression.
 
 ```hcl
-# Before
-condition = var.environment = "dev" || ...   # assignment operator!
+# Wrong
+condition = var.environment = "dev"
 
-# After
-condition = var.environment == "dev" || ...  # comparison operator
+# Fixed
+condition = contains(["dev", "staging", "prod"], var.environment)
 ```
 
-`=` is assignment (invalid in HCL expression context). `==` is equality comparison. This is a syntax error caught by `terraform validate`.
+## Verify
+
+```bash
+terraform validate
+terraform plan -var="db_password=secret"
+```

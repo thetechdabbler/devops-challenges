@@ -1,27 +1,19 @@
 variable "instance_type" {
-  type        = string
-  description = "EC2 instance type"
-  default     = "t3.micro"
-
-  validation {
-    condition     = can(regex("^t3\\.", var.instance_type))
-    error_message = "Only t3.* instance types are allowed."
-  }
+  type    = string           # FIX 1: add type constraint
+  default = "t3.micro"
 }
 
 variable "instance_count" {
-  type        = number
-  description = "Number of instances to launch"
-  default     = 1
+  type    = number
+  default = 1               # FIX 2: number literal, not string "1"
 }
 
 variable "environment" {
-  type        = string
-  description = "Deployment environment"
-  default     = "dev"
+  type    = string
+  default = "dev"
 
   validation {
-    condition     = var.environment == "dev" || var.environment == "prod"
-    error_message = "environment must be dev or prod."
+    condition     = contains(["dev", "staging", "prod"], var.environment)  # FIX 5: == to contains()
+    error_message = "Environment must be dev, staging, or prod."
   }
 }

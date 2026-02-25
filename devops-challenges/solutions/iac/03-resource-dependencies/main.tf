@@ -13,7 +13,7 @@ provider "aws" {
 
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
-  tags       = { Name = "devops-vpc" }
+  tags = { Name = "devops-vpc" }
 }
 
 resource "aws_internet_gateway" "main" {
@@ -37,7 +37,7 @@ resource "aws_route_table" "main" {
 }
 
 resource "aws_route_table_association" "main" {
-  subnet_id      = aws_subnet.main.id
+  subnet_id      = aws_subnet.main.id        # FIX 5: .id not .name
   route_table_id = aws_route_table.main.id
 }
 
@@ -63,8 +63,8 @@ resource "aws_instance" "web" {
   ami           = "ami-0c55b159cbfafe1f0"
   instance_type = "t3.micro"
 
-  subnet_id              = aws_subnet.main.id
-  vpc_security_group_ids = [aws_security_group.web.id]
+  subnet_id              = aws_subnet.main.id              # FIX 2: reference, not hardcoded ID
+  vpc_security_group_ids = [aws_security_group.web.id]    # FIX 1 & 4: resource reference with .id
 
   tags = { Name = "devops-web" }
 }

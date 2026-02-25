@@ -1,9 +1,0 @@
-modules:
-  http_2xx:               # FIX 1: consistent name used in prometheus.yml
-    prober: http          # FIX 2: correct prober for HTTP/HTTPS
-    timeout: 5s
-    http:
-      valid_status_codes: []   # empty = accept all 2xx
-      method: GET
-      preferred_ip_protocol: ip4   # FIX 3: IPv4
-      follow_redirects: true
