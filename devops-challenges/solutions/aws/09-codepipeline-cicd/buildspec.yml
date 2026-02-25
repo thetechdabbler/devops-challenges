@@ -1,0 +1,21 @@
+version: 0.2
+
+phases:
+  install:                         # FIX 1: correct phase order
+    runtime-versions:
+      python: 3.12
+  pre_build:
+    commands:
+      - pip install -r requirements.txt
+  build:
+    commands:
+      - pytest tests/
+      - docker build -t $IMAGE_URI .
+  post_build:
+    commands:
+      - docker push $IMAGE_URI
+      - printf '[{"name":"app","imageUri":"%s"}]' $IMAGE_URI > imagedefinitions.json
+
+artifacts:
+  files:
+    - imagedefinitions.json

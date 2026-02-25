@@ -1,0 +1,18 @@
+filebeat.inputs:
+  - type: log               # FIX 4: correct input type
+    enabled: true
+    paths:
+      - /var/log/app/*.log
+    json.keys_under_root: true
+
+output.elasticsearch:
+  hosts: ["elasticsearch:9200"]              # FIX 1: HTTP port
+  index: "filebeat-%{[agent.version]}-%{+yyyy.MM.dd}"  # FIX 2: correct date format
+
+setup.kibana:
+  host: "kibana:5601"      # FIX 3: correct port
+
+setup.ilm.enabled: false   # FIX 5: disable ILM for dev
+
+setup.template.name: "filebeat"
+setup.template.pattern: "filebeat-*"

@@ -1,0 +1,29 @@
+receivers:
+  otlp:               # FIX 1: correct receiver name
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+
+exporters:
+  prometheus:         # FIX 2: correct exporter name
+    endpoint: "0.0.0.0:8889"
+  otlp/jaeger:
+    endpoint: jaeger:4317   # FIX 5: include port
+    tls:
+      insecure: true
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]     # FIX 1: updated reference
+      processors: [batch]   # FIX 3: use batch processor
+      exporters: [otlp/jaeger]
+    metrics:
+      receivers: [otlp]     # FIX 1: updated reference
+      processors: [batch]
+      exporters: [prometheus]  # FIX 4: correct exporter reference

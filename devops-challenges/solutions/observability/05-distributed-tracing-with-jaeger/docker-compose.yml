@@ -1,0 +1,9 @@
+services:
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "4317:4317"    # OTLP gRPC
+      - "4318:4318"    # OTLP HTTP
+      - "16686:16686"  # FIX 3: correct host:container port mapping for UI
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
