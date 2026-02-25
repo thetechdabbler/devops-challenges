@@ -1,0 +1,18 @@
+{
+  "title": "DevOps Overview",
+  "schemaVersion": 1,
+  "panels": [
+    {
+      "title": "Request Rate",
+      "type": "graph-panel",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "rate(http_requests_total[5m])",
+          "legendFormat": "{{job}}"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 }
+    }
+  ]
+}
