@@ -1,0 +1,35 @@
+groups:
+  - name: slo-recording-rules
+    rules:
+      - record: slo_error_rate_5m        # BUG 1: wrong naming convention — should follow job:metric:ratio_rate5m
+        expr: |
+          sum(rate(http_requests_total{status=~"5.."}[5m]))
+          /
+          sum(rate(http_requests_total[5m]))
+        # BUG 5: missing labels block with job and slo
+
+      - record: slo_error_rate_1h        # BUG 1: wrong naming convention
+        expr: |
+          sum(rate(http_requests_total{status=~"5.."}[1h]))
+          /
+          sum(rate(http_requests_total[1h]))
+
+      - record: error_budget_remaining
+        expr: 0.999 - 1                  # BUG 3: inverted — should be 1 - 0.999
+
+  - name: slo-alerts
+    rules:
+      - alert: HighBurnRate
+        expr: |
+          slo_error_rate_1h > (14.4 * 0.001)
+          and
+          sum(rate(http_requests_total{status=~"5.."}[720h]))   # BUG 2: window too large — should be 5m
+          /
+          sum(rate(http_requests_total[720h]))
+          > (14.4 * 0.001)
+        for: 1h                          # BUG 4: too long for fast-burn — should be 2m
+        labels:
+          severity: critical
+          slo: availability
+        annotations:
+          summary: "High SLO burn rate"
