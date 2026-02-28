@@ -36,6 +36,10 @@ COPY prisma ./prisma
 # Copy compiled application
 COPY --from=builder /app/dist ./dist
 
+# Entrypoint: run migrations then start server
+COPY docker-entrypoint.sh ./
+RUN chmod +x docker-entrypoint.sh
+
 USER appuser
 EXPOSE 3001
-CMD ["node", "dist/index.js"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
