@@ -45,15 +45,20 @@
 - [x] NFR Design - Unit 2: auth - COMPLETE
 - [x] Infrastructure Design - Unit 2: auth - COMPLETE
 - [x] Code Generation - Unit 2: auth - COMPLETE
+- [x] Build and Test - Unit 2: auth - COMPLETE
+- [x] Functional Design - Unit 3: content-api - COMPLETE
+- [x] NFR Requirements - Unit 3: content-api - COMPLETE
+- [x] NFR Design - Unit 3: content-api - COMPLETE
+- [x] Infrastructure Design - Unit 3: content-api - COMPLETE
 
 ### OPERATIONS PHASE
 - [ ] Operations - PLACEHOLDER
 
 ## Current Status
 - **Lifecycle Phase**: CONSTRUCTION
-- **Current Stage**: Code Generation — Unit 2: auth COMPLETE
-- **Next Stage**: Build and Test — Unit 2: auth
-- **Status**: Awaiting user approval of Code Generation
+- **Current Stage**: Code Generation — Unit 3: content-api
+- **Next Stage**: Build and Test — Unit 3: content-api
+- **Status**: In progress
 
 ---
 

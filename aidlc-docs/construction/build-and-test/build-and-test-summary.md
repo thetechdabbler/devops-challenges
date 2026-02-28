@@ -1,54 +1,70 @@
-# Build and Test Summary — Unit 1: setup
+# Build and Test Summary — Cumulative
 
-## Build Status
+## Unit 1: setup
 
-| Step | Tool | Status | Notes |
-|------|------|--------|-------|
-| Backend `npm install` | npm 10 | ✅ PASS | 489 packages, 0 vulnerabilities |
-| `npx prisma generate` | Prisma CLI 5.22.0 | ✅ PASS | Client generated to node_modules/@prisma/client |
-| `npm run build` (tsc) | TypeScript 5.4 | ✅ PASS | 0 errors, dist/ emitted |
-| Frontend `npm install` | npm 10 | ✅ PASS | 0 vulnerabilities |
+| Step | Tool | Status |
+|------|------|--------|
+| Backend `npm install` | npm 10 | ✅ PASS — 489 packages, 0 vulnerabilities |
+| `npx prisma generate` | Prisma CLI 5.22.0 | ✅ PASS |
+| `npm run build` (tsc) | TypeScript 5.4 | ✅ PASS — 0 errors |
+| Frontend `npm install` | npm 10 | ✅ PASS — 0 vulnerabilities |
 
-## Test Execution Summary
+### Unit Tests (Unit 1)
 
-### Unit Tests
+| Suite | Tests | Passed |
+|-------|-------|--------|
+| errors.test.ts | 5 | 5 |
+| env.test.ts | 8 | 8 |
+| health.controller.test.ts | 2 | 2 |
+| **Unit 1 Total** | **16** | **16** |
 
-Executed: `cd portal/backend && npm test`
+---
+
+## Unit 2: auth
+
+| Step | Tool | Status |
+|------|------|--------|
+| No new packages | — | ✅ All auth deps already installed in Unit 1 |
+| `npm run build` (tsc) | TypeScript 5.4 | ✅ PASS — 0 errors |
+
+### Unit Tests (Unit 2)
+
+| Suite | Tests | Passed |
+|-------|-------|--------|
+| user.repository.test.ts | 3 | 3 |
+| auth.service.test.ts | 5 | 5 |
+| auth.middleware.test.ts | 4 | 4 |
+| auth.controller.test.ts | 4 | 4 |
+| env.test.ts (updated) | 9 | 9 |
+| **Unit 2 New/Updated** | **25** | **25** |
+
+---
+
+## Cumulative Test Status
 
 | Suite | Tests | Passed | Failed |
 |-------|-------|--------|--------|
 | errors.test.ts | 5 | 5 | 0 |
-| env.test.ts | 8 | 8 | 0 |
+| env.test.ts | 9 | 9 | 0 |
 | health.controller.test.ts | 2 | 2 | 0 |
-| **Total** | **16** | **16** | **0** |
-
-- **Coverage**: Infrastructure layer (AppError, validateEnv, health check)
-- **Duration**: ~3s
-- **Status**: ✅ PASS
+| user.repository.test.ts | 3 | 3 | 0 |
+| auth.service.test.ts | 5 | 5 | 0 |
+| auth.middleware.test.ts | 4 | 4 | 0 |
+| auth.controller.test.ts | 4 | 4 | 0 |
+| **TOTAL** | **33** | **33** | **0** |
 
 ### Integration Tests
-- **Status**: ⏭ DEFERRED — requires Unit 2 (auth) to be complete
+- **Status**: ⏭ DEFERRED — requires Unit 3 (content-api) to be complete
 
-### Performance Tests
-- **Status**: ⏭ N/A — 2–5 known users; no load testing required
-
-### E2E Tests
-- **Status**: ⏭ DEFERRED — requires all 6 units (frontend-shell Unit 6)
-
-### Security Tests
-- **Status**: ⏭ DEFERRED — `npm audit` shows 0 vulnerabilities; full auth security tested in Unit 2
+### Performance / E2E Tests
+- **Status**: ⏭ N/A / DEFERRED — see unit-test-instructions.md
 
 ## Overall Status
 
 | Concern | Status |
 |---------|--------|
 | Build | ✅ Clean |
-| Unit Tests | ✅ 16/16 pass |
+| Unit Tests | ✅ 33/33 pass |
 | TypeScript | ✅ 0 compile errors |
 | Dependencies | ✅ 0 vulnerabilities |
-| Ready for Unit 2 Code Generation | ✅ Yes |
-
-## Next Steps
-
-Unit 1 (setup) is complete. Proceed to Unit 2 (auth):
-- Functional Design → NFR Requirements → NFR Design → Infrastructure Design → Code Generation → Build and Test
+| Ready for Unit 3 Code Generation | ✅ Yes |

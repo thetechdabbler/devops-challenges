@@ -14,6 +14,8 @@ import healthRouter from './routes/health'
 import { oauthRouter } from './routes/auth.routes'
 import { authenticate } from './middleware/auth.middleware'
 import { authController } from './controllers/auth.controller'
+import { contentService } from './services/content.service'
+import contentRouter from './routes/content.routes'
 
 async function main() {
   // 1. Validate all required environment variables (fail-fast)
@@ -21,6 +23,9 @@ async function main() {
 
   // 2. Connect to PostgreSQL with retry
   await connectWithRetry()
+
+  // 3. Initialise content index (fail-fast if CONTENT_PATH missing)
+  contentService.initialize()
 
   // 3. Create Express application
   const app = express()
@@ -56,7 +61,7 @@ async function main() {
   app.use('/auth', oauthRouter)                        // GitHub OAuth dance (public)
   app.post('/api/auth/logout', authController.logout)  // Logout — exempt from authenticate
   app.get('/api/me', authenticate, authController.getMe)
-  // Content routes registered in Unit 3
+  app.use('/api/content', authenticate, contentRouter)
   // Progress + Session routes registered in Unit 4
   // Notes routes registered in Unit 5
 
