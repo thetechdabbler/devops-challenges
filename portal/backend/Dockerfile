@@ -19,6 +19,9 @@ RUN npm run build
 FROM node:20-alpine AS production
 WORKDIR /app
 
+# Install OpenSSL so Prisma can detect the version at runtime
+RUN apk add --no-cache openssl
+
 # Create non-root user
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 

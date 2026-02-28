@@ -3,7 +3,7 @@ import express from 'express'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import passport from 'passport'
-import { Strategy as GitHubStrategy } from 'passport-github2'
+import { Strategy as GitHubStrategy, Profile as GitHubProfile } from 'passport-github2'
 
 import { validateEnv } from './lib/env'
 import { connectWithRetry } from './lib/db'
@@ -49,7 +49,7 @@ async function main() {
         clientSecret: process.env.GITHUB_CLIENT_SECRET!,
         callbackURL: process.env.GITHUB_CALLBACK_URL!,
       },
-      (_accessToken, _refreshToken, profile, done) => {
+      (_accessToken: string, _refreshToken: string, profile: GitHubProfile, done: (err: null, user: GitHubProfile) => void) => {
         done(null, profile)
       }
     )
