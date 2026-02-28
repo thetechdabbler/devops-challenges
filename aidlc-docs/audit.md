@@ -2,6 +2,107 @@
 
 ---
 
+## Build and Test — Unit 2: auth — IN PROGRESS
+**Timestamp**: 2026-02-28T00:20:00Z
+**User Input**: "Approve & Continue"
+**AI Response**: Code Generation for Unit 2 (auth) approved. Executing Build and Test.
+
+---
+
+## Code Generation — Unit 2: auth — Plan Approved
+**Timestamp**: 2026-02-28T00:10:00Z
+**User Input**: "Approve & Continue"
+**AI Response**: Code Generation plan for Unit 2 (auth) approved. Executing 12 steps.
+
+---
+
+## Code Generation — Unit 2: auth — Plan Presented
+**Timestamp**: 2026-02-28T00:05:00Z
+**AI Prompt**: Code generation plan for Unit 2 (auth) presented for approval.
+**Context**: 12-step plan — 5 modified files from Unit 1, 5 new source files, 4 new test files, 1 doc file
+
+---
+
+## Infrastructure Design — Unit 2: auth — Approved
+**Timestamp**: 2026-02-28T00:00:00Z
+**User Input**: "Approve & Continue"
+**AI Response**: Infrastructure Design for Unit 2 (auth) approved. Proceeding to Code Generation.
+**Context**: infrastructure-design.md and deployment-architecture.md approved
+
+---
+
+## Infrastructure Design — Unit 2: auth — COMPLETE
+**Timestamp**: 2026-02-27T00:15:00Z
+**AI Response**: No new infrastructure — all auth components run within the existing backend Docker service. GITHUB_CALLBACK_URL env var added to .env.example.
+**Files Generated**: infrastructure-design.md, deployment-architecture.md
+
+---
+
+## NFR Design — Unit 2: auth — Approved
+**Timestamp**: 2026-02-27T00:10:00Z
+**User Input**: "Approve & Continue"
+**AI Response**: NFR Design for Unit 2 (auth) approved. Proceeding to Infrastructure Design.
+**Context**: nfr-design-patterns.md and logical-components.md approved
+
+---
+
+## NFR Requirements — Unit 2: auth — Approved
+**Timestamp**: 2026-02-27T00:00:00Z
+**User Input**: "Approve & Continue"
+**AI Response**: NFR Requirements for Unit 2 (auth) approved. Proceeding to NFR Design.
+**Context**: nfr-requirements.md and tech-stack-decisions.md approved
+
+---
+
+## Functional Design — Unit 2: auth — Approved
+**Timestamp**: 2026-02-26T05:45:00Z
+**User Input**: "Approve & Continue"
+**AI Response**: Functional Design for Unit 2 (auth) approved. Proceeding to NFR Requirements.
+**Context**: domain-entities.md, business-rules.md, business-logic-model.md approved
+
+---
+
+## Build and Test — Unit 1: setup — COMPLETE
+**Timestamp**: 2026-02-26T05:30:00Z
+**User Input**: "Approve & Continue"
+**AI Response**: Build and Test for Unit 1 (setup) executed and complete.
+**Results**: npm install (0 vulnerabilities), prisma generate (✅), tsc build (0 errors), 16/16 unit tests pass
+**Files Generated**: build-instructions.md, unit-test-instructions.md, integration-test-instructions.md, build-and-test-summary.md
+**Context**: Unit 1: setup fully complete — proceeding to Unit 2: auth
+
+---
+
+## Code Generation — Unit 1: setup — Plan Approved
+**Timestamp**: 2026-02-25T03:05:00Z
+**User Input**: "Approve & Continue"
+**AI Response**: Code Generation plan approved. Executing 13 steps.
+**Context**: 13-step plan for ~30 files across portal/backend/ and portal/frontend/
+
+---
+
+## Code Generation Plan — Unit 1: setup — Presented for Approval
+**Timestamp**: 2026-02-25T03:00:00Z
+**AI Prompt**: "Code generation plan complete. 13 steps, ~30 files. Ready to proceed?"
+**Context**: Plan covers backend config, frontend scaffold, Prisma schema, core libs, health endpoint, Docker Compose, tests, docs
+
+---
+
+## Infrastructure Design — Unit 1: setup — Approved
+**Timestamp**: 2026-02-25T02:50:00Z
+**User Input**: "Approve & Continue"
+**AI Response**: Infrastructure Design for Unit 1 (setup) approved. Proceeding to Code Generation planning.
+**Context**: infrastructure-design.md and deployment-architecture.md approved
+
+---
+
+## NFR Design — Unit 1: setup — Approved
+**Timestamp**: 2026-02-25T02:35:00Z
+**User Input**: "Approve & Continue"
+**AI Response**: NFR Design for Unit 1 (setup) approved. Proceeding to Infrastructure Design.
+**Context**: nfr-design-patterns.md and logical-components.md approved
+
+---
+
 ## NFR Requirements — Unit 1: setup — Approved
 **Timestamp**: 2026-02-25T02:15:00Z
 **User Input**: "Approve & Continue"

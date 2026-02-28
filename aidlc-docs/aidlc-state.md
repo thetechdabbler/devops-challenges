@@ -37,18 +37,23 @@
 - [x] Functional Design - Unit 1: setup - COMPLETE
 - [x] NFR Requirements - Unit 1: setup - COMPLETE
 - [x] NFR Design - Unit 1: setup - COMPLETE
-- [ ] Infrastructure Design - TBD
-- [ ] Code Generation - PENDING (per unit)
-- [ ] Build and Test - PENDING
+- [x] Infrastructure Design - Unit 1: setup - COMPLETE
+- [x] Code Generation - Unit 1: setup - COMPLETE
+- [x] Build and Test - Unit 1: setup - COMPLETE
+- [x] Functional Design - Unit 2: auth - COMPLETE
+- [x] NFR Requirements - Unit 2: auth - COMPLETE
+- [x] NFR Design - Unit 2: auth - COMPLETE
+- [x] Infrastructure Design - Unit 2: auth - COMPLETE
+- [x] Code Generation - Unit 2: auth - COMPLETE
 
 ### OPERATIONS PHASE
 - [ ] Operations - PLACEHOLDER
 
 ## Current Status
 - **Lifecycle Phase**: CONSTRUCTION
-- **Current Stage**: NFR Design — Unit 1: setup COMPLETE
-- **Next Stage**: Infrastructure Design (Unit 1: setup)
-- **Status**: Awaiting user approval of NFR Design
+- **Current Stage**: Code Generation — Unit 2: auth COMPLETE
+- **Next Stage**: Build and Test — Unit 2: auth
+- **Status**: Awaiting user approval of Code Generation
 
 ---
 
