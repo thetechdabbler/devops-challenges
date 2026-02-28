@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import passport from 'passport'
 import { authController } from '../controllers/auth.controller'
+import { log } from '../lib/logger'
 
 // Mounted at /auth — handles the GitHub OAuth dance (public, no JWT required)
 export const oauthRouter = Router()
@@ -14,6 +15,7 @@ oauthRouter.get(
   (req, res, next) => {
     passport.authenticate('github', { session: false }, (err: Error | null, profile: unknown) => {
       if (err || !profile) {
+        log.error({ err, profile }, 'GitHub OAuth callback failed')
         return res.redirect(`${process.env.FRONTEND_URL ?? ''}/?error=auth_failed`)
       }
       // Temporarily attach the GitHub profile so handleOAuthCallback can read it

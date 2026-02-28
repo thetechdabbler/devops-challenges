@@ -3,7 +3,7 @@ http://localhost {
     handle /api/* {
         reverse_proxy backend:3001
     }
-    handle /auth/* {
+    handle /auth/github* {
         reverse_proxy backend:3001
     }
     handle /health {

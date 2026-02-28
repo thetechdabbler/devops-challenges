@@ -7,8 +7,7 @@ export interface User {
 }
 
 export async function fetchMe(): Promise<User> {
-  const { user } = await request<{ user: User }>('/api/me')
-  return user
+  return request<User>('/api/me')
 }
 
 export async function logout(): Promise<void> {
