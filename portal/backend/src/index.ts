@@ -16,6 +16,7 @@ import { authenticate } from './middleware/auth.middleware'
 import { authController } from './controllers/auth.controller'
 import { contentService } from './services/content.service'
 import contentRouter from './routes/content.routes'
+import progressRouter from './routes/progress.routes'
 
 async function main() {
   // 1. Validate all required environment variables (fail-fast)
@@ -62,7 +63,7 @@ async function main() {
   app.post('/api/auth/logout', authController.logout)  // Logout — exempt from authenticate
   app.get('/api/me', authenticate, authController.getMe)
   app.use('/api/content', authenticate, contentRouter)
-  // Progress + Session routes registered in Unit 4
+  app.use('/api/progress', authenticate, progressRouter)
   // Notes routes registered in Unit 5
 
   // 7. Error middleware — MUST be registered last

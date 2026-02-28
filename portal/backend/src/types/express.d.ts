@@ -2,8 +2,10 @@ import 'express'
 
 declare global {
   namespace Express {
-    interface Request {
-      user?: { id: number; username: string; avatarUrl: string }
+    interface User {
+      id: number
+      username: string
+      avatarUrl: string
     }
   }
 }
