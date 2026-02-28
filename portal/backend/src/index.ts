@@ -17,6 +17,7 @@ import { authController } from './controllers/auth.controller'
 import { contentService } from './services/content.service'
 import contentRouter from './routes/content.routes'
 import progressRouter from './routes/progress.routes'
+import noteRouter from './routes/note.routes'
 
 async function main() {
   // 1. Validate all required environment variables (fail-fast)
@@ -64,6 +65,7 @@ async function main() {
   app.get('/api/me', authenticate, authController.getMe)
   app.use('/api/content', authenticate, contentRouter)
   app.use('/api/progress', authenticate, progressRouter)
+  app.use('/api/notes', authenticate, noteRouter)
   // Notes routes registered in Unit 5
 
   // 7. Error middleware — MUST be registered last
