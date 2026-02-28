@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProgressStatus {
+  NotStarted
+  InProgress
+  Completed
+}
+
+model User {
+  id         Int                @id @default(autoincrement())
+  github_id  Int                @unique
+  username   String
+  avatar_url String
+  created_at DateTime           @default(now())
+  progress   ExerciseProgress[]
+  sessions   Session[]
+  notes      Note[]
+}
+
+model ExerciseProgress {
+  id         Int            @id @default(autoincrement())
+  user_id    Int
+  unit       String
+  exercise   String
+  status     ProgressStatus @default(NotStarted)
+  updated_at DateTime       @updatedAt
+  user       User           @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, unit, exercise])
+}
+
+model Session {
+  id               Int       @id @default(autoincrement())
+  user_id          Int
+  unit             String
+  exercise         String
+  started_at       DateTime  @default(now())
+  ended_at         DateTime?
+  duration_seconds Int?
+  is_active        Boolean   @default(true)
+  user             User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model Note {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  unit       String?
+  exercise   String?
+  content    String   @default("")
+  updated_at DateTime @updatedAt
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, unit, exercise])
+}

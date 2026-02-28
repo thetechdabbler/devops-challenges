@@ -1,0 +1,20 @@
+# Replace your-domain.com with your actual domain before deploying.
+# DNS A record must point to this VPS IP before starting Caddy.
+# Caddy auto-obtains and renews Let's Encrypt TLS certificates.
+
+your-domain.com {
+    # Backend routes
+    handle /api/* {
+        reverse_proxy backend:3001
+    }
+    handle /auth/* {
+        reverse_proxy backend:3001
+    }
+    handle /health {
+        reverse_proxy backend:3001
+    }
+    # Everything else → React SPA (nginx serves index.html for all routes)
+    handle {
+        reverse_proxy frontend:80
+    }
+}
