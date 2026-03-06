@@ -23,6 +23,64 @@ export default function Layout() {
         >
           DevOps Practice Portal
         </span>
+        <button
+          onClick={() => navigate('/interview/new')}
+          style={{
+            padding: '0.28rem 0.7rem',
+            background: '#0f172a',
+            border: '1px solid #334155',
+            color: '#93c5fd',
+            borderRadius: 6,
+            cursor: 'pointer',
+            fontSize: '0.78rem',
+          }}
+        >
+          New Interview
+        </button>
+        <button
+          onClick={() => navigate('/interview/history')}
+          style={{
+            padding: '0.28rem 0.7rem',
+            background: '#0f172a',
+            border: '1px solid #334155',
+            color: '#a7f3d0',
+            borderRadius: 6,
+            cursor: 'pointer',
+            fontSize: '0.78rem',
+          }}
+        >
+          History
+        </button>
+        <button
+          onClick={() => navigate('/questions/transfer')}
+          style={{
+            padding: '0.28rem 0.7rem',
+            background: '#0f172a',
+            border: '1px solid #334155',
+            color: '#f9a8d4',
+            borderRadius: 6,
+            cursor: 'pointer',
+            fontSize: '0.78rem',
+          }}
+        >
+          Import/Export
+        </button>
+        {user?.role === 'admin' && (
+          <button
+            onClick={() => navigate('/admin/questions')}
+            style={{
+              padding: '0.28rem 0.7rem',
+              background: '#0f172a',
+              border: '1px solid #334155',
+              color: '#fcd34d',
+              borderRadius: 6,
+              cursor: 'pointer',
+              fontSize: '0.78rem',
+            }}
+          >
+            Admin
+          </button>
+        )}
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '1rem' }}>
           {user && (
             <>

@@ -34,6 +34,12 @@ export class BadRequestError extends AppError {
   }
 }
 
+export class ConflictError extends AppError {
+  constructor(message = 'Conflict detected') {
+    super('CONFLICT', 409, message)
+  }
+}
+
 export class InternalError extends AppError {
   constructor(message = 'Internal server error') {
     super('INTERNAL_ERROR', 500, message)

@@ -14,15 +14,26 @@ enum ProgressStatus {
   Completed
 }
 
+enum UserRole {
+  user
+  reviewer
+  admin
+}
+
 model User {
   id         Int                @id @default(autoincrement())
   github_id  Int                @unique
   username   String
   avatar_url String
+  role       UserRole           @default(user)
   created_at DateTime           @default(now())
-  progress   ExerciseProgress[]
-  sessions   Session[]
-  notes      Note[]
+  progress              ExerciseProgress[]
+  sessions              Session[]
+  notes                 Note[]
+  question_history      UserQuestionHistory[]
+  reviewed_questions    Question[]           @relation("QuestionReviewer")
+  question_audit_events QuestionAuditEvent[]
+  interview_sessions    InterviewSession[]
 }
 
 model ExerciseProgress {
@@ -59,4 +70,156 @@ model Note {
   user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@unique([user_id, unit, exercise])
+}
+
+// ─── Interview Bot: Question Bank ────────────────────────────────────────────
+
+enum QuestionType {
+  theory
+  scenario
+}
+
+enum ExperienceLevel {
+  junior
+  mid
+  senior
+}
+
+enum QuestionSource {
+  bank
+  ai
+}
+
+enum QuestionStatus {
+  pending_review
+  active
+  rejected
+}
+
+enum QuestionAuditAction {
+  create
+  update
+  archive
+}
+
+enum Topic {
+  Docker
+  Kubernetes
+  CI_CD         @map("CI/CD")
+  Ansible
+  IaC_Terraform @map("IaC/Terraform")
+  Observability
+  AWS
+  General
+}
+
+model Question {
+  id               String    @id @default(uuid())
+  text             String
+  type             QuestionType
+  difficulty       Int
+  version          Int             @default(0)
+  experience_level ExperienceLevel
+  source           QuestionSource
+  status           QuestionStatus  @default(active)
+  answer           String
+  explanation      String
+  key_concepts     String[]        @default([])
+  created_at       DateTime        @default(now())
+
+  reviewed_at DateTime?
+  reviewed_by Int?
+  reviewer    User?           @relation("QuestionReviewer", fields: [reviewed_by], references: [id])
+
+  topics                    QuestionTopic[]
+  history                   UserQuestionHistory[]
+  audit_events              QuestionAuditEvent[]
+  interview_session_questions InterviewSessionQuestion[]
+
+  @@index([status])
+  @@index([difficulty])
+  @@index([status, difficulty, experience_level])
+}
+
+model QuestionAuditEvent {
+  id          String              @id @default(uuid())
+  question_id String
+  actor_id    Int
+  action      QuestionAuditAction
+  before_json Json?
+  after_json  Json?
+  created_at  DateTime            @default(now())
+
+  question Question @relation(fields: [question_id], references: [id], onDelete: Cascade)
+  actor    User     @relation(fields: [actor_id], references: [id], onDelete: Cascade)
+
+  @@index([question_id, created_at])
+  @@index([actor_id, created_at])
+}
+
+model QuestionTopic {
+  question_id String
+  topic       Topic
+
+  question Question @relation(fields: [question_id], references: [id], onDelete: Cascade)
+
+  @@id([question_id, topic])
+  @@index([topic])
+}
+
+// ─── Interview Bot: Interview Session ────────────────────────────────────────
+
+enum InterviewSessionStatus {
+  in_progress
+  completed
+}
+
+model InterviewSession {
+  id               String                @id @default(uuid())
+  user_id          Int
+  topics           Topic[]
+  difficulty       Int
+  experience_level ExperienceLevel
+  question_count   Int
+  status           InterviewSessionStatus @default(in_progress)
+  created_at       DateTime              @default(now())
+  completed_at     DateTime?
+
+  user              User                    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  session_questions InterviewSessionQuestion[]
+
+  @@index([user_id])
+  @@index([user_id, status])
+}
+
+model InterviewSessionQuestion {
+  id              String    @id @default(uuid())
+  session_id      String
+  question_id     String
+  sequence_order  Int
+  answer_revealed Boolean   @default(false)
+  self_rating     Int?
+  revealed_at     DateTime?
+
+  session  InterviewSession @relation(fields: [session_id], references: [id], onDelete: Cascade)
+  question Question         @relation(fields: [question_id], references: [id])
+
+  @@unique([session_id, sequence_order])
+  @@unique([session_id, question_id])
+  @@index([session_id])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
+model UserQuestionHistory {
+  id          String   @id @default(uuid())
+  user_id     Int
+  question_id String
+  seen_at     DateTime @default(now())
+
+  question Question @relation(fields: [question_id], references: [id])
+  user     User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([user_id, question_id])
 }

@@ -12,7 +12,7 @@ export function authenticate(req: Request, res: Response, next: NextFunction): v
 
   try {
     const payload = authService.verifyJWT(token)
-    req.user = { id: payload.id, username: payload.username, avatarUrl: payload.avatarUrl }
+    req.user = { id: payload.id, username: payload.username, avatarUrl: payload.avatarUrl, role: payload.role ?? 'user' }
     next()
   } catch (err) {
     next(err)

@@ -8,6 +8,7 @@ export interface JwtPayload {
   id: number
   username: string
   avatarUrl: string
+  role: string
 }
 
 export const authService = {
@@ -24,6 +25,7 @@ export const authService = {
       id: user.id,
       username: user.username,
       avatarUrl: user.avatar_url,
+      role: user.role,
     }
     return jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: '24h' })
   },

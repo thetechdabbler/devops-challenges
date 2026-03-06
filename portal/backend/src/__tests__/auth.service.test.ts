@@ -26,6 +26,7 @@ const fakeUser = {
   github_id: 12345,
   username: 'octocat',
   avatar_url: 'https://avatars.githubusercontent.com/u/12345',
+  role: 'user' as const,
   created_at: new Date(),
 }
 

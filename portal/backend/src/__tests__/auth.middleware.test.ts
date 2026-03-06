@@ -26,7 +26,7 @@ describe('authenticate middleware', () => {
   })
 
   it('sets req.user and calls next() for a valid token', () => {
-    const payload = { id: 1, username: 'octocat', avatarUrl: 'https://x.com' }
+    const payload = { id: 1, username: 'octocat', avatarUrl: 'https://x.com', role: 'user' }
     mockVerifyJWT.mockReturnValueOnce(payload)
     const req = makeReq({ auth_token: 'valid.token.here' })
 

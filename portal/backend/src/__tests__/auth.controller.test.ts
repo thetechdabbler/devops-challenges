@@ -55,7 +55,7 @@ describe('authController.getMe', () => {
 
 describe('authController.handleOAuthCallback', () => {
   it('upserts user, sets auth_token cookie, and redirects to /auth/callback', async () => {
-    const fakeUser = { id: 1, github_id: 42, username: 'octocat', avatar_url: 'https://x.com', created_at: new Date() }
+    const fakeUser = { id: 1, github_id: 42, username: 'octocat', avatar_url: 'https://x.com', role: 'user' as const, created_at: new Date() }
     mockUpsertUser.mockResolvedValueOnce(fakeUser)
     mockGenerateJWT.mockReturnValueOnce('signed.jwt.token')
 

@@ -4,6 +4,7 @@ export interface User {
   id: number
   username: string
   avatarUrl: string
+  role?: 'user' | 'reviewer' | 'admin'
 }
 
 export async function fetchMe(): Promise<User> {

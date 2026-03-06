@@ -1,0 +1,7 @@
+flow: aidlc
+version: 0.1.64
+installed_at: '2026-03-05T17:54:23.054Z'
+tools:
+  - claude
+  - cursor
+  - codex

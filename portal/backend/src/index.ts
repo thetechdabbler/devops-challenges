@@ -18,6 +18,9 @@ import { contentService } from './services/content.service'
 import contentRouter from './routes/content.routes'
 import progressRouter from './routes/progress.routes'
 import noteRouter from './routes/note.routes'
+import adminRouter from './routes/admin.routes'
+import interviewSessionRouter from './routes/interview-session.routes'
+import questionTransferRouter from './routes/question-transfer.routes'
 
 async function main() {
   // 1. Validate all required environment variables (fail-fast)
@@ -66,6 +69,9 @@ async function main() {
   app.use('/api/content', authenticate, contentRouter)
   app.use('/api/progress', authenticate, progressRouter)
   app.use('/api/notes', authenticate, noteRouter)
+  app.use('/api/v1/admin', adminRouter)
+  app.use('/api/v1/questions', questionTransferRouter)
+  app.use('/api/v1/sessions', interviewSessionRouter)
   // Notes routes registered in Unit 5
 
   // 7. Error middleware — MUST be registered last
